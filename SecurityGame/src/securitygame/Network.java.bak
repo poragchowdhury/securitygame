@@ -102,7 +102,6 @@ public class Network {
 				if((tmpneighbors.size()>0 && !tmpneighbors.contains(nodeindex)) || tmpneighbors.size()==0)
 				{
 					adjacencymatrix[i][nodeindex] = 1;
-					adjacencymatrix[nodeindex][i] = 1;
 					tmpneighbors.add(nodeindex);
 					neighborcounter++;
 					if(neighborcounter==localmax)
