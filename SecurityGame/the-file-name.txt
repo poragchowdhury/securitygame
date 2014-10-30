@@ -17,7 +17,7 @@ securitygame.Node@7ef72e77,securitygame.Node@160bc7c0,securitygame.Node@612dcb8c
 securitygame.Node@58e862c,securitygame.Node@612dcb8c,
 securitygame.Node@74a14fed,securitygame.Node@5f67198e,
 securitygame.Node@76d4d81,securitygame.Node@21ff3fcf,securitygame.Node@2142c63f,securitygame.Node@70284ac3,
-securitygame.Node@7519ca2c,securitygame.Node@70284ac3,
+securitygame.Node@7519ca2c,securitygame.Node@70284ac3, it will changge
 0,0
 0,0
 0,0
