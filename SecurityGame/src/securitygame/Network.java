@@ -41,6 +41,23 @@ public class Network {
 		return this.nodes[nodeindex];
 	}
 	
+	public boolean isAllowedToBeNeighbor(int currentindex, int neighborindex, int [][] adjacencymatrix)
+	{
+		if (currentindex == neighborindex)
+			return false;
+		int neighborcount = 0;
+		for(int i=0; i < adjacencymatrix[neighborindex].length; ++i)
+		{
+			if (adjacencymatrix[neighborindex][i] == 1)
+				neighborcount++;
+		}
+		if(neighborcount < Network.MAX_NEIGHBORS)
+			return true;
+		else 
+			return false;
+			
+	}
+	
 	public void printNetwork(Network network)
 	{
 		PrintWriter writer;
@@ -59,6 +76,8 @@ public class Network {
 						writer.print(neighbor.getNodeid());
 					else 
 						writer.print(neighbor.getNodeid()+",");
+					
+					System.out.println(neighbor.getNodeid());
 					++neiborcounter;
 				}
 				writer.println();
@@ -89,26 +108,107 @@ public class Network {
 		{
 			Arrays.fill(adjacencymatrix[i], 0);
 		}
-		
+		ArrayList<Integer> completednodes = new ArrayList<Integer>();
+		ArrayList<Integer> tmpnodestack = new ArrayList<Integer>();
+		int currentindex = 0;
+		//System.out.println("Current index at first: " + currentindex);
 		for (int i = 0; i < NUMBER_OF_NODES; ++i)
 		{
 			Random r = new Random();
-			int localmax = r.nextInt(MAX_NEIGHBORS - 1) + 1;
+			int localmax = r.nextInt(MAX_NEIGHBORS - 2) + 2;
+			
 			int neighborcounter = 0;
 			ArrayList<Integer> tmpneighbors = new ArrayList<Integer>();
+			ArrayList<Integer> rejectedneighbors = new ArrayList<Integer>();
+			
 			while(true)
 			{
 				int nodeindex= r.nextInt(Network.NUMBER_OF_NODES);
-				if((tmpneighbors.size()>0 && !tmpneighbors.contains(nodeindex)) || tmpneighbors.size()==0)
+				
+				int totalneighbors = 0;
+				for(int k=0; k<Network.NUMBER_OF_NODES; k++)
 				{
-					adjacencymatrix[i][nodeindex] = 1;
-					adjacencymatrix[nodeindex][i] = 1;
-					tmpneighbors.add(nodeindex);
-					neighborcounter++;
-					if(neighborcounter==localmax)
-						break;
+					if(adjacencymatrix[currentindex][k]==1)
+					{
+						totalneighbors++;
+					}
+				}
+				if(totalneighbors==Network.MAX_NEIGHBORS)
+				{
+					break;
 				}
 				
+				
+				if(rejectedneighbors.size()>0)
+				{
+					if(rejectedneighbors.size()==(Network.NUMBER_OF_NODES-tmpneighbors.size()-1))
+					{
+						break;
+					}
+				}
+				
+				
+				
+				
+				if (network.isAllowedToBeNeighbor(currentindex, nodeindex, adjacencymatrix) == true)
+				{
+					if((tmpneighbors.size()>0 && !tmpneighbors.contains(nodeindex) && tmpneighbors.size() < network.MAX_NEIGHBORS) || tmpneighbors.size()==0)
+					{
+						System.out.println("Current Index  " + currentindex + "neighbor counter "+ neighborcounter + " Num Neighbors " + localmax);
+						System.out.println("Got Neighbor " + nodeindex);
+						
+						adjacencymatrix[currentindex][nodeindex] = 1;
+						adjacencymatrix[nodeindex][currentindex] = 1;
+						tmpneighbors.add(nodeindex);
+						if (!tmpnodestack.contains(nodeindex)){
+							tmpnodestack.add(nodeindex);
+							//System.out.println("Adding to stack: " + nodeindex);
+						}
+						neighborcounter++;
+						if(neighborcounter==localmax)
+						{	
+							System.out.println("Neighbour Count for " + currentindex + " : " +neighborcounter);
+							break;
+						}
+					}
+					else
+					{
+						if(rejectedneighbors.size()>=0 && !rejectedneighbors.contains(nodeindex))
+						{
+							rejectedneighbors.add(nodeindex);
+						}
+					}
+				}
+				else
+				{
+					if(rejectedneighbors.size()>=0 && !rejectedneighbors.contains(nodeindex))
+					{
+						rejectedneighbors.add(nodeindex);
+					}
+				}
+				
+			}
+			completednodes.add(currentindex);
+			// pick a node from the stack
+			//currentindex = tmpnodestack.get(0);
+			//System.out.println("Current index: " + currentindex);
+			//tmpnodestack.remove(0);
+			while(true)//
+			{
+				if (tmpnodestack.size() == 0)
+					break;
+				
+				// pick a node from the stack
+				currentindex = tmpnodestack.get(0);
+				//System.out.println("Current index: " + currentindex);
+				tmpnodestack.remove(0);
+				Node currentnode = network.getNode(currentindex);
+			
+				if (!completednodes.contains(currentindex)   && (currentnode.neighbor.size() < network.MAX_NEIGHBORS))
+				{
+					
+						break;
+				}
 			}
 		}
 		
@@ -177,7 +277,7 @@ public class Network {
 	}
 	
 	public static void main(String [ ] args){
-		generateNetwork("securitygame", 20, 5);
+		generateNetwork("securitygame", 20, 4);
 	}
 	
 }
