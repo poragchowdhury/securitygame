@@ -43,6 +43,8 @@ public class Network {
 
 	public Node getNode(int nodeIndex)
 	{
+        if(nodeIndex >= nodes.length || nodeIndex < 0)
+            return null;
 		return nodes[nodeIndex];
 	}
 
@@ -91,7 +93,25 @@ public class Network {
 			return false;
 
 	}
+    public int getSize()
+    {
+        return nodes.length;
+    }
 
+    public void addHoneypot(int sv, int pv, int[]neighbors)
+    {
+        Node[] n = new Node[nodes.length+1];
+        for(int i = 0; i < nodes.length; i++)
+            n[i] = nodes[i];
+        n[nodes.length] = new Node(nodes.length,sv,pv,true,false);
+
+        for(int i = 0; i < neighbors.length; i++)
+        {
+            n[nodes.length].neighbor.add(nodes[neighbors[i]]);
+            nodes[neighbors[i]].neighbor.add(n[nodes.length]);
+        }
+        nodes = n;
+    }
 	public void printNetwork()
 	{
 		PrintWriter writer;
@@ -119,7 +139,6 @@ public class Network {
 			{
 				Node node = getNode(i);
 				writer.println(node.getPv()+","+node.getSv()+","+node.isPublic());
-
 			}
 			writer.close();
 		}
@@ -132,6 +151,35 @@ public class Network {
 			e.printStackTrace();
 		}
 	}
+
+    public String toString()
+    {
+        String s = "";
+        for (int i = 0; i < nodes.length; i++)
+		{
+			Node node = getNode(i);
+			int neighborSize = node.neighbor.size();
+			int neighborCounter = 0;
+			for(Node neighbor: node.neighbor)
+			{
+				if(neighbor.getNodeID()!=node.getNodeID())
+				{
+					if(neighborCounter==neighborSize-1)
+						s+=neighbor.getNodeID();
+					else
+						s+=neighbor.getNodeID()+",";
+					}
+					neighborCounter++;
+				}
+				s+="\n";
+			}
+			for (int i = 0; i < nodes.length; i++)
+			{
+				Node node = getNode(i);
+				s+=node.getPv()+","+node.getSv()+","+node.isPublic()+"\n";
+			}
+        return s;
+    }
 
 	public void generateNetwork()
 	{

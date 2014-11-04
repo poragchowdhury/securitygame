@@ -4,7 +4,9 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        generateGraphs(10);
+        //generateGraphs(10);
+        Defender d = new Defender("shield", "2");
+
     }
 
     public static void generateGraphs(int numGraphs)
