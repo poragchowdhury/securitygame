@@ -1,436 +1,343 @@
 package securitygame;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
+//import java.io.UnsupportedEncodingException;
+//import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
+//import java.util.Iterator;
 import java.util.Random;
-
-import org.apache.commons.csv.CSVFormat;
+/*import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.csv.CSVRecord;*/
 
 public class Network {
-	private String name;
-	public static int NUMBER_OF_NODES = 10;
-	public static int NUMBER_OF_PUBLIC_NODES = 2;
-	public static int NUMBER_OF_ROUTER_NODES = 2;
-	public static int NUMBER_OF_PRIVATE_NODES = NUMBER_OF_NODES - NUMBER_OF_PUBLIC_NODES - NUMBER_OF_ROUTER_NODES;
-	public static int MAX_NEIGHBORS = 3;
-	public static int MIN_NEIGHBORS = 2;
-	public static int MAX_POINT_VALUE = 20;
-	public static int MAX_ROUTER_EDGES = 5;
-
-	private Node[] nodes = new Node[NUMBER_OF_NODES];
+	private int name;
+	private Node[] nodes = new Node[Parameters.NUMBER_OF_NODES];
 	//private Node[] publicnodes = new Node[ NUMBER_OF_PUBLIC_NODES];
 	//private Node[] privatenodes = new Node[NUMBER_OF_PRIVATE_NODES];
 
 
-	public Network()
-	{
-
-	}
+	public Network(){}
 	
-	public Network(String networkname, int numberofnodes)
+	public Network(int networkName)
 	{
-		this.name = networkname;
-		Network.NUMBER_OF_NODES = numberofnodes;
-		for(int i=0; i<Network.NUMBER_OF_NODES; i++)
+		name = networkName;
+		for(int i=0; i<Parameters.NUMBER_OF_NODES; i++)
 		{
-			this.nodes[i] = new Node();
-			nodes[i].setNodeid(i);
+			nodes[i] = new Node();
+			nodes[i].setNodeID(i);
 		}
-		
+		generateNetwork();
 	}
 
-	public Network(String network_name, int number_of_nodes, int max_neighbors, int min_neighbors)
+	public Network(int networkName, int numNodes)
 	{
-		this.name = network_name;
-		Network.NUMBER_OF_NODES = number_of_nodes;
-		Network.MAX_NEIGHBORS = max_neighbors;
-		Network.MIN_NEIGHBORS = min_neighbors;
-		for(int i=0; i<Network.NUMBER_OF_NODES; i++)
+		name = networkName;
+		for(int i=0; i<numNodes; i++){
+			nodes[i] = new Node();
+            nodes[i].setNodeID(i);
+        }
+	}
+
+	public Node getNode(int nodeIndex)
+	{
+		return nodes[nodeIndex];
+	}
+
+	public void addMoreEdges(int routerIndex, int [][] adjacencyMatrix)
+	{
+		ArrayList<Integer> routerNeighbors = new ArrayList<Integer>();
+		Random r = new Random(name);
+		int neighbourCount = 0;
+		for (int i = 0; i < nodes.length; i++)
 		{
-			this.nodes[i] = new Node();
-			
-		}
-	}
-
-	public Node getNode(int nodeindex)
-	{
-		return this.nodes[nodeindex];
-	}
-
-	public void addMoreEdges(int routerindex, int [][] adjacencymatrix)
-	{
-		ArrayList<Integer> routerneighbors = new ArrayList<Integer>();
-		Random r = new Random();
-		int neighbourcount = 0;
-
-		for (int i = 0; i < Network.NUMBER_OF_NODES; ++i)
-		{
-			if(adjacencymatrix[routerindex][i] == 1){
-				routerneighbors.add(i);
-				neighbourcount++;
+			if(adjacencyMatrix[routerIndex][i] == 1){
+				routerNeighbors.add(i);
+				neighbourCount++;
 			}
 		}
-
-		if(neighbourcount >= Network.MAX_ROUTER_EDGES)
+		if(neighbourCount >= Parameters.MAX_ROUTER_EDGES)
 			return;
-
-
-
-		while(neighbourcount < Network.MAX_ROUTER_EDGES)
+		while(neighbourCount < Parameters.MAX_ROUTER_EDGES)
 		{
-			int neighborindex= r.nextInt(Network.NUMBER_OF_NODES);
-			if(neighborindex != routerindex){
-				if(!routerneighbors.contains(neighborindex))
+			int neighborindex= r.nextInt(nodes.length);
+			if(neighborindex != routerIndex){
+				if(!routerNeighbors.contains(neighborindex))
 				{
-					adjacencymatrix[routerindex][neighborindex]=1;
-					adjacencymatrix[neighborindex][routerindex]=1;
-					routerneighbors.add(neighborindex);
-					neighbourcount++;
+					adjacencyMatrix[routerIndex][neighborindex]=1;
+					adjacencyMatrix[neighborindex][routerIndex]=1;
+					routerNeighbors.add(neighborindex);
+					neighbourCount++;
 				}
 			}
 		}
-
 	}
 
-	public boolean isAllowedToBeNeighbor(int currentindex, int neighborindex, int [][] adjacencymatrix)
+	public boolean isAllowedToBeNeighbor(int currentIndex, int neighborIndex, int [][] adjacencyMatrix)
 	{
-		if (currentindex == neighborindex)
+		if (currentIndex == neighborIndex)
 			return false;
-		int neighborcount = 0;
-		for(int i=0; i < adjacencymatrix[neighborindex].length; ++i)
+		int neighborCount = 0;
+		for(int i=0; i < adjacencyMatrix[neighborIndex].length; ++i)
 		{
-			if (adjacencymatrix[neighborindex][i] == 1)
-				neighborcount++;
+			if (adjacencyMatrix[neighborIndex][i] == 1)
+				neighborCount++;
 		}
-		if(neighborcount < Network.MAX_NEIGHBORS)
+		if(neighborCount < Parameters.MAX_NEIGHBORS)
 			return true;
-		else 
+		else
 			return false;
 
 	}
 
-	public static void printNetwork(Network network)
+	public void printNetwork()
 	{
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(network.name + ".graph", "UTF-8");
-
-			for (int i = 0; i < network.NUMBER_OF_NODES; ++i)
+			writer = new PrintWriter(name + ".graph", "UTF-8");
+			for (int i = 0; i < nodes.length; i++)
 			{
-
-				Node node = network.getNode(i);
-				int neighborsize = node.neighbor.size();
-				int neiborcounter = 0;
+				Node node = getNode(i);
+				int neighborSize = node.neighbor.size();
+				int neighborCounter = 0;
 				for(Node neighbor: node.neighbor)
 				{
-
-					if(neighbor.getNodeid()!=node.getNodeid())
+					if(neighbor.getNodeID()!=node.getNodeID())
 					{
-						if(neiborcounter==neighborsize-1)
-							writer.print(neighbor.getNodeid());
+						if(neighborCounter==neighborSize-1)
+							writer.print(neighbor.getNodeID());
 						else 
-							writer.print(neighbor.getNodeid()+",");
+							writer.print(neighbor.getNodeID()+",");
 					}
-
-					//System.out.println(neighbor.getNodeid());
-					++neiborcounter;
+					neighborCounter++;
 				}
 				writer.println();
-
 			}
-
-			for (int i = 0; i < network.NUMBER_OF_NODES; ++i)
+			for (int i = 0; i < nodes.length; i++)
 			{
-				Node node = network.getNode(i);
-				writer.println(node.getPv()+","+node.getSv()+","+node.isIspublic());
+				Node node = getNode(i);
+				writer.println(node.getPv()+","+node.getSv()+","+node.isPublic());
 
 			}
 			writer.close();
-		} 
-		catch (FileNotFoundException | UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
+		}
+        catch (FileNotFoundException e)
+        {
+              e.printStackTrace();
+        }
+		catch ( Exception e)
+        {
 			e.printStackTrace();
 		}
-
 	}
-	
-	
-	
-	
-	
 
-	public static void generateNetwork(String network_name, int number_of_nodes, int max_neighbours, int min_neighbors)
+	public void generateNetwork()
 	{
-		Network network = new Network(network_name, number_of_nodes, max_neighbours, min_neighbors);
-		int [][] adjacencymatrix = new int[NUMBER_OF_NODES][NUMBER_OF_NODES];
-
-		for(int i =0; i<NUMBER_OF_NODES; i++)
+		//Network network = new Network(networkName, numNodes);
+        Random r = new Random(name);
+		int [][] adjacencyMatrix = new int[Parameters.NUMBER_OF_NODES][Parameters.NUMBER_OF_NODES];
+		for(int i =0; i<nodes.length; i++)
+			Arrays.fill(adjacencyMatrix[i], 0);
+		ArrayList<Integer> completedNodes = new ArrayList<Integer>();
+		ArrayList<Integer> tmpNodeStack = new ArrayList<Integer>();
+		int currentIndex = 0;
+		for (int i = 0; i < nodes.length; i++)
 		{
-			Arrays.fill(adjacencymatrix[i], 0);
-		}
-		ArrayList<Integer> completednodes = new ArrayList<Integer>();
-		ArrayList<Integer> tmpnodestack = new ArrayList<Integer>();
-		int currentindex = 0;
-		//System.out.println("Current index at first: " + currentindex);
-		for (int i = 0; i < NUMBER_OF_NODES; ++i)
-		{
-			Random r = new Random();
-			int localmax = r.nextInt(MAX_NEIGHBORS - MIN_NEIGHBORS) + MIN_NEIGHBORS;
-			int neighborcounter = 0;
-			ArrayList<Integer> tmpneighbors = new ArrayList<Integer>();
-			ArrayList<Integer> rejectedneighbors = new ArrayList<Integer>();
-
+			int localMax = r.nextInt(Parameters.MAX_NEIGHBORS - Parameters.MIN_NEIGHBORS) + Parameters.MIN_NEIGHBORS;
+			int neighborCounter = 0;
+			ArrayList<Integer> tmpNeighbors = new ArrayList<Integer>();
+			ArrayList<Integer> rejectedNeighbors = new ArrayList<Integer>();
 			while(true)
 			{
-				int nodeindex= r.nextInt(Network.NUMBER_OF_NODES);
-				int totalneighbors = 0;
-
-				for(int k=0; k<Network.NUMBER_OF_NODES; k++)
-				{
-					if(adjacencymatrix[currentindex][k]==1)
-					{
-						totalneighbors++;
-					}
-				}
-
-				if(totalneighbors==Network.MAX_NEIGHBORS)
-				{
+				int nodeIndex= r.nextInt(nodes.length);
+				int totalNeighbors = 0;
+				for(int k=0; k<nodes.length; k++)
+					if(adjacencyMatrix[currentIndex][k]==1)
+						totalNeighbors++;
+				if(totalNeighbors==Parameters.MAX_NEIGHBORS)
 					break;
-				}
-
-
-				if(rejectedneighbors.size()>0)
-				{
-					if(rejectedneighbors.size()==(Network.NUMBER_OF_NODES-tmpneighbors.size()-1))
-					{
+				if(rejectedNeighbors.size()>0)
+					if(rejectedNeighbors.size()==(nodes.length-tmpNeighbors.size()-1))
 						break;
-					}
-				}
 
-				if (network.isAllowedToBeNeighbor(currentindex, nodeindex, adjacencymatrix) == true)
+				if (isAllowedToBeNeighbor(currentIndex, nodeIndex, adjacencyMatrix))
 				{
-					if((tmpneighbors.size()>0 && !tmpneighbors.contains(nodeindex) && tmpneighbors.size() < network.MAX_NEIGHBORS) || tmpneighbors.size()==0)
+					if((tmpNeighbors.size()>0 && !tmpNeighbors.contains(nodeIndex) && tmpNeighbors.size() < Parameters.MAX_NEIGHBORS) || tmpNeighbors.size()==0)
 					{
-						//System.out.println("Current Index  " + currentindex + "neighbor counter "+ neighborcounter + " Num Neighbors " + localmax);
-						//System.out.println("Got Neighbor " + nodeindex);
-
-						adjacencymatrix[currentindex][nodeindex] = 1;
-						adjacencymatrix[nodeindex][currentindex] = 1;
-						tmpneighbors.add(nodeindex);
-						if (!tmpnodestack.contains(nodeindex)){
-							tmpnodestack.add(nodeindex);
-							//System.out.println("Adding to stack: " + nodeindex);
+						//System.out.println("Current Index  " + currentIndex + "neighbor counter "+ neighborCounter + " Num Neighbors " + localMax);
+						//System.out.println("Got Neighbor " + nodeIndex);
+						adjacencyMatrix[currentIndex][nodeIndex] = 1;
+						adjacencyMatrix[nodeIndex][currentIndex] = 1;
+						tmpNeighbors.add(nodeIndex);
+						if (!tmpNodeStack.contains(nodeIndex)){
+							tmpNodeStack.add(nodeIndex);
+							//System.out.println("Adding to stack: " + nodeIndex);
 						}
-						neighborcounter++;
-						if(neighborcounter==localmax)
+						neighborCounter++;
+						if(neighborCounter==localMax)
 						{	
-							//System.out.println("Neighbour Count for " + currentindex + " : " +neighborcounter);
+							//System.out.println("Neighbour Count for " + currentIndex + " : " +neighborCounter);
 							break;
 						}
 					}
 					else
-					{
-						if(rejectedneighbors.size()>=0 && !rejectedneighbors.contains(nodeindex))
-						{
-							rejectedneighbors.add(nodeindex);
-						}
-					}
+						if(rejectedNeighbors.size()>=0 && !rejectedNeighbors.contains(nodeIndex))
+							rejectedNeighbors.add(nodeIndex);
 				}
 				else
-				{
-					if(rejectedneighbors.size()>=0 && !rejectedneighbors.contains(nodeindex))
-					{
-						rejectedneighbors.add(nodeindex);
-					}
-				}
-
+					if(rejectedNeighbors.size()>=0 && !rejectedNeighbors.contains(nodeIndex))
+						rejectedNeighbors.add(nodeIndex);
 			}
-
-			completednodes.add(currentindex);
-
+			completedNodes.add(currentIndex);
 			while(true)
 			{
-				if (tmpnodestack.size() == 0)
+				if (tmpNodeStack.size() == 0)
 					break;
-
 				// pick a node from the stack
-				currentindex = tmpnodestack.get(0);
-				//System.out.println("Current index: " + currentindex);
-				tmpnodestack.remove(0);
-
-				if (!completednodes.contains(currentindex))
-				{					
+				currentIndex = tmpNodeStack.get(0);
+				//System.out.println("Current index: " + currentIndex);
+				tmpNodeStack.remove(0);
+				if (!completedNodes.contains(currentIndex))
 					break;
-				}
 			}
 		}
-
-		ArrayList<Integer> tmppublicnodes = new ArrayList<Integer>();
-		int publicnodecounter = 0;
-		Random r = new Random();
+		ArrayList<Integer> tmpPublicNodes = new ArrayList<Integer>();
+		int publicNodeCounter = 0;
 		while(true)
 		{
-			int nodeindex= r.nextInt(Network.NUMBER_OF_NODES);
-			if((tmppublicnodes.size()>0 && !tmppublicnodes.contains(nodeindex)) || tmppublicnodes.size()==0)
+			int nodeIndex= r.nextInt(nodes.length);
+			if((tmpPublicNodes.size()>0 && !tmpPublicNodes.contains(nodeIndex)) || tmpPublicNodes.size()==0)
 			{
-				tmppublicnodes.add(nodeindex);
-				publicnodecounter++;
-				if(publicnodecounter==NUMBER_OF_PUBLIC_NODES)
+				tmpPublicNodes.add(nodeIndex);
+				publicNodeCounter++;
+				if(publicNodeCounter==Parameters.NUMBER_OF_PUBLIC_NODES)
 					break;
 			}
 		}
 
-		ArrayList<Integer> tmprouternodes = new ArrayList<Integer>();
-		int routernodecounter = 0;
+		ArrayList<Integer> tmpRouterNodes = new ArrayList<Integer>();
+		int routerNodeCounter = 0;
 		while(true)
 		{
-			int routernodeindex= r.nextInt(Network.NUMBER_OF_NODES);
-			if (!tmppublicnodes.contains(routernodeindex))
+			int routerNodeIndex= r.nextInt(nodes.length);
+			if (!tmpPublicNodes.contains(routerNodeIndex))
 			{
-				if((tmprouternodes.size()>0 && !tmprouternodes.contains(routernodeindex)) || tmprouternodes.size()==0)
+				if((tmpRouterNodes.size()>0 && !tmpRouterNodes.contains(routerNodeIndex)) || tmpRouterNodes.size()==0)
 				{
-					tmprouternodes.add(routernodeindex);
-					routernodecounter++;
-					if(routernodecounter==NUMBER_OF_ROUTER_NODES)
+					tmpRouterNodes.add(routerNodeIndex);
+					routerNodeCounter++;
+					if(routerNodeCounter==Parameters.NUMBER_OF_ROUTER_NODES)
 						break;
 				}
 			}
 		}
 
-		for(int i = 0; i < NUMBER_OF_NODES; ++i)
+		for(int i = 0; i < nodes.length; ++i)
 		{
-			Node tempnode = network.getNode(i);
-			tempnode.setNodeid(i);
-			tempnode.setIshoneypot(false);
-			if(tmppublicnodes.contains(i))
-			{
-				tempnode.setIspublic(true);
-			}
-			else if(tmprouternodes.contains(i))
+			Node tempNode = getNode(i);
+			tempNode.setNodeID(i);
+			tempNode.setHoneyPot(false);
+			if(tmpPublicNodes.contains(i))
+				tempNode.setPublic(true);
+			else if(tmpRouterNodes.contains(i))
 			{
 				// add extra edges to the adjacency matrix
 				//System.out.println("Router node : " + i);
-				network.addMoreEdges(i, adjacencymatrix);
-				tempnode.setIspublic(false);
-				tempnode.setPv(0);
-				int nodeminsecurityvalue= r.nextInt(Network.MAX_POINT_VALUE - 1) + 1;
-				tempnode.setSv(nodeminsecurityvalue);
+				addMoreEdges(i, adjacencyMatrix);
+				tempNode.setPublic(false);
+				tempNode.setPv(0);
+				int nodeMinSecurityValue= r.nextInt(Parameters.MAX_POINT_VALUE - 1) + 1;
+				tempNode.setSv(nodeMinSecurityValue);
 			}
 			else 
 			{
-				tempnode.setIspublic(false);
-				int nodepointvalue= r.nextInt(Network.MAX_POINT_VALUE - 1) + 1;
-				System.out.println("Setting point value " + nodepointvalue + "for node id " + i);
-				tempnode.setPv(nodepointvalue);
-
-				int securityrandomiztion= r.nextInt(5 - 1) + 1;
-
-				int nodemaxsecurityvalue = nodepointvalue + securityrandomiztion;
-				if (nodemaxsecurityvalue > MAX_POINT_VALUE)
-					nodemaxsecurityvalue = MAX_POINT_VALUE;
-				int nodeminsecurityvalue = nodepointvalue - securityrandomiztion;
-				if (nodeminsecurityvalue < 0)
-					nodeminsecurityvalue = 0;
-
-				int nodesecurityvalue= r.nextInt(nodemaxsecurityvalue - nodeminsecurityvalue) + nodeminsecurityvalue;
-
-				tempnode.setSv(nodesecurityvalue);
-
+				tempNode.setPublic(false);
+				int nodePointValue= r.nextInt(Parameters.MAX_POINT_VALUE - 1) + 1;
+				System.out.println("Setting point value " + nodePointValue + "for node id " + i);
+				tempNode.setPv(nodePointValue);
+				int randSecurity= r.nextInt(5 - 1) + 1;
+				int maxSecurityValue = nodePointValue + randSecurity;
+				if (maxSecurityValue > Parameters.MAX_POINT_VALUE)
+					maxSecurityValue = Parameters.MAX_POINT_VALUE;
+				int minSecurityValue = nodePointValue - randSecurity;
+				if (minSecurityValue < 0)
+					minSecurityValue = 0;
+				int securityValue= r.nextInt(maxSecurityValue - minSecurityValue) + minSecurityValue;
+				tempNode.setSv(securityValue);
 			}
-
 		}
+		for(int i = 0; i < nodes.length; ++i)
+			adjacencyMatrix[i][i] = 0;
 
-		for(int i = 0; i < NUMBER_OF_NODES; ++i)
+		for (int i = 0; i < nodes.length; ++i)
 		{
-			adjacencymatrix[i][i] = 0;
-		}
-
-		for (int i = 0; i < NUMBER_OF_NODES; ++i)
-		{
-			Node tempnode = network.getNode(i);
-
-			for(int j = 0; j < NUMBER_OF_NODES; ++j)
+			Node tempNode = getNode(i);
+			for(int j = 0; j < nodes.length; ++j)
 			{
-				if (adjacencymatrix[i][j] == 1)
+				if (adjacencyMatrix[i][j] == 1)
 				{
-					Node tempneighbor = network.getNode(j);
-					tempnode.addNeighbor(tempneighbor);
+					Node tempNeighbor = getNode(j);
+					tempNode.addNeighbor(tempNeighbor);
 				}
 			}
-
 		}
-		network.printNetwork(network);
+		//printNetwork(network);
 	}
 
-	public static void main(String [ ] args){
-		
+	/*public static void main(String [ ] args)
+    {
 		Network nt = Parser.parseGraph("securitygame.graph");
 		Network.printNetwork(nt);
-		
-		/*generateNetwork("securitygame", Network.NUMBER_OF_NODES, Network.MAX_NEIGHBORS, Network.MIN_NEIGHBORS);
-
-		Random r = new Random();
-		for (int i = 0; i < 10; i++)
-		{
-			int nodepointvalue= r.nextInt(Network.MAX_POINT_VALUE - 1) + 1;
+		//generateNetwork("securitygame", Network.NUMBER_OF_NODES, Network.MAX_NEIGHBORS, Network.MIN_NEIGHBORS);
+		//Random r = new Random();
+		//for (int i = 0; i < 10; i++)
+		//{
+		//	int nodepointvalue= r.nextInt(Network.MAX_POINT_VALUE - 1) + 1;
 			//System.out.println(nodepointvalue);
-		}*/
-	}
-
+		//}
+	}*/
 }
-
 
 class Node 
 {
-	private int nodeid;
+	private int nodeID;
 	private int sv;
 	private int pv;
-	boolean ishoneypot;
+	boolean isHoneyPot;
 	ArrayList<Node> neighbor = new ArrayList<Node>();
-	boolean ispublic;
+	boolean isPublic;
 
-	public Node()
-	{
+	public Node(){}
 
-	}
-
-	public Node(int nodeid, int sv, int pv, boolean ishoneypot, boolean ispublic) {
+	public Node(int nodeID, int sv, int pv, boolean isHoneyPot, boolean isPublic) {
 		super();
-		this.nodeid = nodeid;
+		this.nodeID = nodeID;
 		this.sv = sv;
 		this.pv = pv;
-		this.ishoneypot = ishoneypot;
-		this.ispublic = ispublic;
+		this.isHoneyPot = isHoneyPot;
+		this.isPublic = isPublic;
 	}
 
-
-	public void addNeighbor(Node neighbornode)
+	public void addNeighbor(Node neighborNode)
 	{
-		this.neighbor.add(neighbornode);
+		neighbor.add(neighborNode);
 	}
 
 	private ArrayList<Node> getNeighbors()
 	{
-		return this.neighbor;
+		return neighbor;
 	}
 
-	private boolean deleteNeighbor(int nodeid)
+	private boolean deleteNeighbor(int id)
 	{
-		if(this.neighbor.size() == 1)
+		if(neighbor.size() == 1)
 			return false;
 
 		for(Node d: this.neighbor)
 		{
-			if(d.nodeid == nodeid && d.neighbor.size() > 1)
+			if(d.nodeID == id && d.neighbor.size() > 1)
 			{
 				this.neighbor.remove(this.neighbor.indexOf(d));
 				return true;
@@ -439,45 +346,53 @@ class Node
 		return false;
 	}
 
-	public int getNodeid() {
-		return nodeid;
+	public int getNodeID()
+    {
+		return nodeID;
 	}
 
-	public void setNodeid(int nodeid) {
-		this.nodeid = nodeid;
+	public void setNodeID(int nodeID)
+    {
+		this.nodeID = nodeID;
 	}
 
-	public int getSv() {
+	public int getSv()
+    {
 		return sv;
 	}
 
-	public void setSv(int sv) {
+	public void setSv(int sv)
+    {
 		this.sv = sv;
 	}
 
-	public int getPv() {
+	public int getPv()
+    {
 		return pv;
 	}
 
-	public void setPv(int pv) {
+	public void setPv(int pv)
+    {
 		this.pv = pv;
 	}
 
-	public boolean isIshoneypot() {
-		return ishoneypot;
+	public boolean isHoneyPot()
+    {
+		return isHoneyPot;
 	}
 
-	public void setIshoneypot(boolean ishoneypot) {
-		this.ishoneypot = ishoneypot;
+	public void setHoneyPot(boolean honeyPot)
+    {
+		this.isHoneyPot = honeyPot;
 	}
 
-	public boolean isIspublic() {
-		return ispublic;
+	public boolean isPublic()
+    {
+		return isPublic;
 	}
 
-	public void setIspublic(boolean ispublic) {
-		this.ispublic = ispublic;
+	public void setPublic(boolean aPublic)
+    {
+		this.isPublic = aPublic;
 	}
-
-
 }
