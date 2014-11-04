@@ -14,6 +14,7 @@ import org.apache.commons.csv.CSVRecord;*/
 
 public class Network {
 	private int name;
+    private String fileName;
 	private Node[] nodes = new Node[Parameters.NUMBER_OF_NODES];
 	//private Node[] publicnodes = new Node[ NUMBER_OF_PUBLIC_NODES];
 	//private Node[] privatenodes = new Node[NUMBER_OF_PRIVATE_NODES];
@@ -24,6 +25,7 @@ public class Network {
 	public Network(int networkName)
 	{
 		name = networkName;
+        fileName = name +"";
 		for(int i=0; i<Parameters.NUMBER_OF_NODES; i++)
 		{
 			nodes[i] = new Node();
@@ -35,6 +37,7 @@ public class Network {
 	public Network(int networkName, int numNodes)
 	{
 		name = networkName;
+        fileName = name+"";
 		for(int i=0; i<numNodes; i++){
 			nodes[i] = new Node();
             nodes[i].setNodeID(i);
@@ -76,7 +79,10 @@ public class Network {
 			}
 		}
 	}
-
+    public void setName(String n)
+    {
+        fileName = n;
+    }
 	public boolean isAllowedToBeNeighbor(int currentIndex, int neighborIndex, int [][] adjacencyMatrix)
 	{
 		if (currentIndex == neighborIndex)
@@ -116,7 +122,7 @@ public class Network {
 	{
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(name + ".graph", "UTF-8");
+			writer = new PrintWriter(fileName + ".graph", "UTF-8");
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
