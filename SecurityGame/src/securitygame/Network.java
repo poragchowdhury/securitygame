@@ -277,7 +277,7 @@ public class Network {
 	public void generateNetwork()
 	{
 		//Network network = new Network(networkName, numNodes);
-		Random r = new Random();
+		Random r = new Random(name);
 		int [][] adjacencyMatrix = new int[Parameters.NUMBER_OF_NODES][Parameters.NUMBER_OF_NODES];
 		for(int i =0; i<nodes.length; i++)
 			Arrays.fill(adjacencyMatrix[i], 0);
