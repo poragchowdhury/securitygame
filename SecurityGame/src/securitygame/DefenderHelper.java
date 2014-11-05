@@ -103,7 +103,7 @@ public class DefenderHelper
         }catch (Exception e){
             e.printStackTrace();
         }
-        net.setName(defenderName+"-"+graphFile);
+        net.setName(Integer.parseInt(defenderName+"-"+graphFile));
         net.printNetwork();
     }
 
