@@ -53,7 +53,7 @@ public class Parser
 						if(counter==2)
 						{
 							String x = itr.next();
-							node.setPublic(Boolean.parseBoolean(x));
+							node.setHoneyPot(Boolean.parseBoolean(x));
 						}
 						else if(counter<2)
 						{

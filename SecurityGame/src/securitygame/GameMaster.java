@@ -4,9 +4,9 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        //generateGraphs(10);
+        generateGraphs(10);
         //Defender d = new Defender("shield", "3");
-        DefenderHelper dh = new DefenderHelper("shield","3");
+        //DefenderHelper dh = new DefenderHelper("shield","3");
 
     }
 
@@ -16,6 +16,9 @@ public class GameMaster
         {
             Network n = new Network(i);
             n.printNetwork();
+            n.shuffleNetwork();
+            n.printNetwork();
+            n.printHiddenNetwork();
         }
     }
 }
