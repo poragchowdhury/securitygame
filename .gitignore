@@ -5,3 +5,7 @@ SecurityGame/bin/securitygame/GameMaster.class
 *.class
 *.iws
 SecurityGame/SecurityGame.iws
+*.iws
+*.defence
+*.graph
+*.class

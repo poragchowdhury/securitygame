@@ -121,6 +121,7 @@ public class DefenderHelper
             e.printStackTrace();
         }
         net.setName(name+"-"+graphFile);
+        net.shuffleNetwork();//avoid predictable location of honeypot (last node in list)
         net.printNetwork();
     }
 
