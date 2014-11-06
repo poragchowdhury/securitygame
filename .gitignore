@@ -1,0 +1,4 @@
+SecurityGame/bin/securitygame/Defender.class
+SecurityGame/bin/securitygame/GameMaster.class
+*.graph
+*.defence
