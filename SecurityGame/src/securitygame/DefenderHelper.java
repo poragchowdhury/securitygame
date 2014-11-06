@@ -120,11 +120,7 @@ public class DefenderHelper
         }catch (Exception e){
             e.printStackTrace();
         }
-<<<<<<< HEAD
         net.setName(name+"-"+graphFile);
-=======
-        net.setName(Integer.parseInt(defenderName+"-"+graphFile));
->>>>>>> origin/master
         net.printNetwork();
     }
 

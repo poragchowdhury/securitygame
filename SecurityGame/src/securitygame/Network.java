@@ -14,7 +14,7 @@ import org.apache.commons.csv.CSVRecord;*/
 
 public class Network {
 	private int name;
-	
+	private String fullGraphName;//for when the graph is modified by an agent i.e. Miners-1
 	private Node[] nodes = new Node[Parameters.NUMBER_OF_NODES];
 	//private Node[] publicnodes = new Node[ NUMBER_OF_PUBLIC_NODES];
 	//private Node[] privatenodes = new Node[NUMBER_OF_PRIVATE_NODES];
@@ -25,6 +25,7 @@ public class Network {
 	public Network(int networkName)
 	{
 		name = networkName;
+        fullGraphName = ""+name;//for now
 		for(int i=0; i<Parameters.NUMBER_OF_NODES; i++)
 		{
 			nodes[i] = new Node();
@@ -46,8 +47,8 @@ public class Network {
 		return name;
 	}
 
-	public void setName(int name) {
-		this.name = name;
+	public void setName(String s) {
+		fullGraphName = s;
 	}
 
 
@@ -187,7 +188,7 @@ public class Network {
 	{
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(name + ".graph", "UTF-8");
+			writer = new PrintWriter(fullGraphName + ".graph", "UTF-8");
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
@@ -254,8 +255,8 @@ public class Network {
 
 	public void shuffleNetwork()
 	{
-		ArrayList<Integer> assigned = new ArrayList<>();
-		this.setName(name+1000);
+		ArrayList<Integer> assigned = new ArrayList<Integer>();
+		//this.setName(name+1000);
 		Random rand = new Random();
 		for(int i = 0; i< this.nodes.length; i++)
 		{
