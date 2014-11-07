@@ -16,9 +16,6 @@ public class Network {
 	private int name;
 	private String fullGraphName;//for when the graph is modified by an agent i.e. Miners-1
 	private Node[] nodes = new Node[Parameters.NUMBER_OF_NODES];
-	//private Node[] publicnodes = new Node[ NUMBER_OF_PUBLIC_NODES];
-	//private Node[] privatenodes = new Node[NUMBER_OF_PRIVATE_NODES];
-
 
 	public Network(){}
 
@@ -64,7 +61,6 @@ public class Network {
 			}
 		}
 		return null;
-		
 	}
 
 	public void addMoreEdges(int routerIndex, int [][] adjacencyMatrix)
@@ -112,6 +108,7 @@ public class Network {
 			return false;
 
 	}
+
 	public int getSize()
 	{
 		return nodes.length;
@@ -182,8 +179,6 @@ public class Network {
 		}
 	}
 
-	
-	
 	public void printNetwork()
 	{
 		PrintWriter writer;
@@ -256,7 +251,6 @@ public class Network {
 	public void shuffleNetwork()
 	{
 		ArrayList<Integer> assigned = new ArrayList<Integer>();
-		//this.setName(name+1000);
 		Random rand = new Random();
 		for(int i = 0; i< this.nodes.length; i++)
 		{
