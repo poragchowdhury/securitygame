@@ -6,11 +6,12 @@ import java.util.Random;
  * Defender agent. The actions for the defender in this game include strengthening nodes, adding firewalls, and adding honeypots.
  * All logic/equations/formulas/etc for how your defender decides to select actions should be included in run()
  */
-public class Defender
+public class Defender implements Runnable
 {
-    private Network net;
-    private DefenderHelper dh;
-
+    protected Network net;
+    protected DefenderHelper dh;
+    protected String defenderName;
+    protected String graph;
     /**
      * Constructor.
      * Parses Network stored in graphFile.
@@ -21,11 +22,10 @@ public class Defender
      */
     public Defender(String agentName, String graphFile)
     {
+        defenderName = agentName;
+        graph = graphFile;
         net = Parser.parseGraph(graphFile+".graph");
         dh = new DefenderHelper(net,graphFile, agentName);
-        run();
-        dh.close();
-        System.out.println("completed "+ agentName +"-"+graphFile+".graph");
     }
 
     /**
@@ -73,21 +73,28 @@ public class Defender
     }
 
     /**
-     * Add your decision logic here.
+     * Add your decision logic here in your subclass
      */
     public void run()
     {
-        Random r = new Random();
-        while(dh.getBudget() > 0){
-            double x = r.nextDouble();
-            if(x <= 4.0 / 9.0)
-                strengthen(r.nextInt(net.getSize()));
-            else if( x <= 8.0 / 9.0)
-                firewall(r.nextInt(net.getSize()),r.nextInt(net.getSize()));
-            else{
-                int[] list =  {0,1};
-                honeypot(19,3,list);
-            }
-        }
+        System.out.println("please create your own subclass of this class for your defender");
+    }
+
+    /**
+     * Get Agent Name used by GameMaster.
+     * @return Name of defender
+     */
+    public String getName()
+    {
+        return defenderName;
+    }
+
+    /**
+     * Get Game used by GameMaster
+     * @return graph number
+     */
+    public String getGraph()
+    {
+        return graph;
     }
 }
