@@ -34,6 +34,7 @@ public class Network {
 	public Network(int networkName, int numNodes)
 	{
 		name = networkName;
+		fullGraphName = "" + name;
 		for(int i=0; i<numNodes; i++){
 			nodes[i] = new Node();
 			nodes[i].setNodeID(i);
@@ -189,16 +190,24 @@ public class Network {
 				Node node = getNode(i);
 				int neighborSize = node.neighbor.size();
 				int neighborCounter = 0;
-				for(Node neighbor: node.neighbor)
+
+				if (node.neighbor.get(0) == null)
 				{
-					if(neighbor.getNodeID()!=node.getNodeID())
+					writer.print("-1");
+				}
+				else
+				{
+					for(Node neighbor: node.neighbor)
 					{
-						if(neighborCounter==neighborSize-1)
-							writer.print(neighbor.getNodeID());
-						else 
-							writer.print(neighbor.getNodeID()+",");
+						if(neighbor.getNodeID()!=node.getNodeID())
+						{
+							if(neighborCounter==neighborSize-1)
+								writer.print(neighbor.getNodeID());
+							else 
+								writer.print(neighbor.getNodeID()+",");
+						}
+						neighborCounter++;
 					}
-					neighborCounter++;
 				}
 				writer.println();
 			}

@@ -9,9 +9,9 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 10;
-        //generateGraphs(numGames);
-        ExecutorService exec = Executors.newFixedThreadPool(4);
+        int numGames = 1;
+        generateGraphs(numGames);
+        /*ExecutorService exec = Executors.newFixedThreadPool(4);
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         for(int i = 0; i < numGames;i++)
         {
@@ -25,6 +25,7 @@ public class GameMaster
 
         for (Defender defender : defenders)
             new DefenderHelper(defender.getName(), defender.getGraph());
+            */
     }
 
     public static void generateGraphs(int numGraphs)
@@ -34,8 +35,10 @@ public class GameMaster
             Network n = new Network(i);
             n.printNetwork();
             n.shuffleNetwork();
-            n.printNetwork();
+            
             n.printHiddenNetwork();
+            Network nt = Parser.parseGraph("0-hidden.graph");
+    		nt.printNetwork();
         }
     }
 }
