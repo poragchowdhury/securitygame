@@ -11,6 +11,13 @@ import java.util.Random;
 /*import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;*/
+/**
+ * Network class is used for generating a network.
+ * Game master will use this class to generate a network. 
+ *
+ * @author      Porag Chowdhury, Anjon Basak
+ * @version     2014/11/01
+ */
 
 public class Network {
 	private int name;
@@ -19,6 +26,10 @@ public class Network {
 
 	public Network(){}
 
+	 /**
+	 * Constructor used by Game master to initialize network.
+	 * @param networkName An integer indicates network name
+	 */
 	public Network(int networkName)
 	{
 		name = networkName;
@@ -31,6 +42,11 @@ public class Network {
 		generateNetwork();
 	}
 
+	 /**
+	 * Constructor used by Game master to initialize network.
+	 * @param networkName An integer indicates network name
+	 * @param numNodes An integer indicates number of nodes in the network
+	 */
 	public Network(int networkName, int numNodes)
 	{
 		name = networkName;
@@ -40,16 +56,28 @@ public class Network {
 			nodes[i].setNodeID(i);
 		}
 	}
-	
+
+	/**
+     * Returns network name.
+     * @return network name
+     */
 	public int getName() {
 		return name;
 	}
-
-	public void setName(String s) {
-		fullGraphName = s;
+	
+	/**
+     * Sets netwrok name.
+     * @param name network name
+     */
+ 	public void setName(String name) {
+		fullGraphName = name;
 	}
 
-
+	/**
+	 * Returns node
+	 * @param nodeId An integer indicates nodeId
+     * @return returns node.
+     */
 	public Node getNode(int nodeId)
 	{
 		if(nodeId >= nodes.length || nodeId < 0)
@@ -64,6 +92,11 @@ public class Network {
 		return null;
 	}
 
+	/**
+     * Adds edges to the node.
+     * @param routerIndex An integer indicates router id
+     * @param adjacencyMatrix A two dimensional array for adjacency
+     */
 	public void addMoreEdges(int routerIndex, int [][] adjacencyMatrix)
 	{
 		ArrayList<Integer> routerNeighbors = new ArrayList<Integer>();
@@ -93,6 +126,13 @@ public class Network {
 		}
 	}
 
+	/**
+     * Returns boolean validating a node to be eligible for Neighbor or not
+     * @param currentIndex An integer indicates current node id
+     * @param neighborIndex An integer indicates neighbor node id
+     * @param adjacencyMatrix A two dimensional array for adjacency
+     * @return boolean True/False validating a node to be eligible for Neighbor or not
+     */
 	public boolean isAllowedToBeNeighbor(int currentIndex, int neighborIndex, int [][] adjacencyMatrix)
 	{
 		if (currentIndex == neighborIndex)
@@ -110,11 +150,22 @@ public class Network {
 
 	}
 
+	/**
+     * Returns size of the network
+     * @return size of the network i.e. number of total nodes
+     */
 	public int getSize()
 	{
 		return nodes.length;
 	}
 
+	
+	/**
+     * Adds Honeypot in the network
+     * @param sv An integer indicates security value
+     * @param pv An integer indicates point value
+     * @param neighbors An integer array indicates all the neighbors
+     */	
 	public void addHoneypot(int sv, int pv, int[]neighbors)
 	{
 		Node[] n = new Node[nodes.length+1];
@@ -130,7 +181,9 @@ public class Network {
 		nodes = n;
 	}
 
-	
+	/**
+     * Print hidden network in a file
+     */
 	public void printHiddenNetwork()
 	{
 		PrintWriter writer;
@@ -179,7 +232,10 @@ public class Network {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+     * Print network in a file
+     */
 	public void printNetwork()
 	{
 		PrintWriter writer;
@@ -227,7 +283,11 @@ public class Network {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+     * Returns all the values in a string
+     * @return all the values in a string
+     */
 	public String toString()
 	{
 		String s = "";
@@ -257,6 +317,9 @@ public class Network {
 		return s;
 	}
 
+	/**
+     * Shuffles all the nodes in the network
+     */
 	public void shuffleNetwork()
 	{
 		ArrayList<Integer> assigned = new ArrayList<Integer>();
@@ -277,7 +340,10 @@ public class Network {
 			}
 		}
 	}
-	
+
+	/**
+     * Generates a random network based on the parameter class and prints it in a file
+     */
 	public void generateNetwork()
 	{
 		//Network network = new Network(networkName, numNodes);
@@ -482,97 +548,4 @@ public class Network {
 			//System.out.println(nodepointvalue);
 		//}
 	}*/
-}
-
-class Node 
-{
-	private int nodeID;
-	private int sv;
-	private int pv;
-	boolean isHoneyPot;
-	ArrayList<Node> neighbor = new ArrayList<Node>();
-	
-	public Node(){}
-
-	public Node(int nodeID, int sv, int pv, boolean isHoneyPot) {
-		super();
-		this.nodeID = nodeID;
-		this.sv = sv;
-		this.pv = pv;
-		this.isHoneyPot = isHoneyPot;
-	}
-
-	public void addNeighbor(Node neighborNode)
-	{
-		neighbor.add(neighborNode);
-	}
-
-	private ArrayList<Node> getNeighbors()
-	{
-		return neighbor;
-	}
-
-	private boolean deleteNeighbor(int id)
-	{
-		if(neighbor.size() == 1)
-			return false;
-
-		for(Node d: this.neighbor)
-		{
-			if(d.nodeID == id && d.neighbor.size() > 1)
-			{
-				this.neighbor.remove(this.neighbor.indexOf(d));
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public int getNodeID()
-	{
-		return nodeID;
-	}
-
-	public void setNodeID(int nodeID)
-	{
-		this.nodeID = nodeID;
-	}
-
-	public int getSv()
-	{
-		return sv;
-	}
-
-	public void setSv(int sv)
-	{
-		this.sv = sv;
-	}
-
-	public int getPv()
-	{
-		return pv;
-	}
-
-	public void setPv(int pv)
-	{
-		this.pv = pv;
-	}
-
-	public boolean isHoneyPot()
-	{
-		return isHoneyPot;
-	}
-
-	public void setHoneyPot(boolean honeyPot)
-	{
-		this.isHoneyPot = honeyPot;
-	}
-
-	public boolean isPublic()
-	{
-		if (this.getSv() == 0 && this.getPv() == 0)
-			return true;
-		
-		return false;
-	}
 }

@@ -37,8 +37,8 @@ public class GameMaster
             n.shuffleNetwork();
             
             n.printHiddenNetwork();
-            Network nt = Parser.parseGraph("0-hidden.graph");
-    		nt.printNetwork();
+            //Network nt = Parser.parseGraph("0-hidden.graph");
+    		//nt.printNetwork();
         }
     }
 }

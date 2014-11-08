@@ -9,8 +9,21 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+/**
+ * Parser class is used for parsing the graph file.
+ * Defender agents, Game master will use this class to parse a graph file. 
+ *
+ * @author      Porag Chowdhury, Anjon Basak
+ * @version     2014/11/01
+ */
+
 public class Parser
 {
+	/**
+	 * Returns a network object by parsing a provided graph file as a parameter
+	 * @param filename A string indicates the filename of the graph
+	 * @return network returns the network object of the corresponding graph file
+	 */
 	public static Network parseGraph(String filename)
 	{
 		File csvTrainData = new File(filename);
