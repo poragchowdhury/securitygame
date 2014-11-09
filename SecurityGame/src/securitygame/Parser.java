@@ -20,9 +20,9 @@ import org.apache.commons.csv.CSVRecord;
 public class Parser
 {
 	/**
-	 * Returns a network object by parsing a provided graph file as a parameter
+	 * Returns a network object by parsing graph file
 	 * @param filename A string indicates the filename of the graph
-	 * @return network returns the network object of the corresponding graph file
+	 * @return returns the network object of the corresponding graph file
 	 */
 	public static Network parseGraph(String filename)
 	{

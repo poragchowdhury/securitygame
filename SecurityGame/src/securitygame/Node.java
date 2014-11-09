@@ -44,7 +44,7 @@ public class Node
      */
 	public void addNeighbor(Node neighborNode)
 	{
-		neighbor.add(neighborNode);
+		this.neighbor.add(neighborNode);
 	}
 
 	/**
@@ -53,7 +53,7 @@ public class Node
      */
 	private ArrayList<Node> getNeighbors()
 	{
-		return neighbor;
+		return this.neighbor;
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class Node
      */
 	private boolean deleteNeighbor(int id)
 	{
-		if(neighbor.size() == 1)
+		if(this.neighbor.size() == 1)
 			return false;
 
 		for(Node d: this.neighbor)
@@ -130,7 +130,7 @@ public class Node
 
 	/**
      * Returns a node is honeypot or not
-     * @return boolean i.e. returns true if a node is honeypot; False if not 
+     * @return boolean i.e. returns true if a node is honeypot; false if not 
      */
 	public boolean isHoneyPot()
 	{

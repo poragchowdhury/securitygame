@@ -19,6 +19,7 @@ import org.apache.commons.csv.CSVRecord;*/
  * @version     2014/11/01
  */
 
+
 public class Network {
 	private int name;
 	private String fullGraphName;//for when the graph is modified by an agent i.e. Miners-1
@@ -66,7 +67,7 @@ public class Network {
 	}
 	
 	/**
-     * Sets netwrok name.
+     * Sets network name.
      * @param name network name
      */
  	public void setName(String name) {
@@ -74,7 +75,7 @@ public class Network {
 	}
 
 	/**
-	 * Returns node
+	 * Returns node with nodeId
 	 * @param nodeId An integer indicates nodeId
      * @return returns node.
      */
@@ -127,7 +128,8 @@ public class Network {
 	}
 
 	/**
-     * Returns boolean validating a node to be eligible for Neighbor or not
+     * Returns boolean validating a node to be eligible for Neighbor or not. This method checks
+     * whether the neighborIndex is itself or whether the number of neighbor is within range 
      * @param currentIndex An integer indicates current node id
      * @param neighborIndex An integer indicates neighbor node id
      * @param adjacencyMatrix A two dimensional array for adjacency
@@ -161,7 +163,7 @@ public class Network {
 
 	
 	/**
-     * Adds Honeypot in the network
+     * Adds Honeypot in the network by creating a new node with neighbors
      * @param sv An integer indicates security value
      * @param pv An integer indicates point value
      * @param neighbors An integer array indicates all the neighbors
@@ -182,7 +184,7 @@ public class Network {
 	}
 
 	/**
-     * Print hidden network in a file
+     * Print hidden network in a file.  private or unexplored nodes' rows will have -1.
      */
 	public void printHiddenNetwork()
 	{
@@ -318,7 +320,7 @@ public class Network {
 	}
 
 	/**
-     * Shuffles all the nodes in the network
+     * Shuffles all the nodes in the network. 
      */
 	public void shuffleNetwork()
 	{
