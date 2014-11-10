@@ -4,12 +4,13 @@ package securitygame;
  * Defender agent. The actions for the defender in this game include strengthening nodes, adding firewalls, and adding honeypots.
  * All logic/equations/formulas/etc for how your defender decides to select actions should be included in run()
  */
-public class Defender implements Runnable
+public abstract class Defender implements Runnable
 {
     protected Network net;
     protected DefenderHelper dh;
     protected String defenderName;
     protected String graph;
+    private volatile boolean isAlive = true;
     /**
      * Constructor.
      * Parses Network stored in graphFile.
@@ -34,7 +35,7 @@ public class Defender implements Runnable
      *
      * @param id Node's ID number
      */
-    public void strengthen(int id)
+    public final void strengthen(int id)
     {
         dh.strengthen(id);
     }
@@ -48,7 +49,7 @@ public class Defender implements Runnable
      * @param id1 ID number of first node
      * @param id2 ID number of second node
      */
-    public void firewall(int id1, int id2)
+    public final void firewall(int id1, int id2)
     {
         dh.firewall(id1,id2);
     }
@@ -65,24 +66,28 @@ public class Defender implements Runnable
      * @param pv Desired Point Value should be >= 0 and <= 20
      * @param newNeighbors array of Node IDs to connect this honeypot to.
      */
-    public void honeypot(int sv, int pv, int[] newNeighbors)
+    public final void honeypot(int sv, int pv, int[] newNeighbors)
     {
         dh.honeypot(sv,pv,newNeighbors);
     }
 
     /**
-     * Add your decision logic here in your subclass
+     * Calls makeMoves()
      */
-    public void run()
+    public final void run()
     {
-        System.out.println("please create your own subclass of this class for your defender");
+        while(isAlive){
+            makeMoves();
+            isAlive = false;
+        }
+        dh.close();
     }
 
     /**
      * Get Agent Name used by GameMaster.
      * @return Name of defender
      */
-    public String getName()
+    public final String getName()
     {
         return defenderName;
     }
@@ -91,8 +96,21 @@ public class Defender implements Runnable
      * Get Game used by GameMaster
      * @return graph number
      */
-    public String getGraph()
+    public final String getGraph()
     {
         return graph;
     }
+    /**
+     * kills long running defenders
+     */
+    public final void kill()
+    {
+        isAlive = false;
+    }
+
+    /**
+     * Defender logic goes here
+     */
+    public abstract void makeMoves();
+
 }

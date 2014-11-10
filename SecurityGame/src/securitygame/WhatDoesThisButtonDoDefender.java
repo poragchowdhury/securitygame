@@ -16,7 +16,7 @@ public class WhatDoesThisButtonDoDefender extends Defender
     /**
      * Defender's logic goes here. Remember to close the defence file when done by calling dh.close()
      */
-    public void run()
+    public void makeMoves()
     {
         Random r = new Random();
         while(dh.getBudget() > 0)

@@ -9,8 +9,8 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 1;
-        generateGraphs(numGames);
+        //int numGames = 1;
+        //generateGraphs(numGames);
         /*ExecutorService exec = Executors.newFixedThreadPool(4);
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         for(int i = 0; i < numGames;i++)
@@ -26,6 +26,10 @@ public class GameMaster
         for (Defender defender : defenders)
             new DefenderHelper(defender.getName(), defender.getGraph());
             */
+        Defender d = new WhatDoesThisButtonDoDefender(1+"");
+        new Thread(d).start();
+        try{Thread.sleep(2000);}catch (Exception e){e.printStackTrace();}
+        d.kill();
     }
 
     public static void generateGraphs(int numGraphs)
