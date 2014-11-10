@@ -27,7 +27,12 @@ public class Analyzer
     double[] aBestOf;
     double[] dBestOf;
 
-
+    /**
+     * Calculates important values for comparing attackers and defenders
+     * @param results point value 2dArray with row as defenders and columns as attackers
+     * @param aNames the names of the attackers as they are in the results
+     * @param dNames the names of the defenders as they are in the results
+     */
     public Analyzer(int[][] results, String[] aNames, String[] dNames)
     {
         points = results;
@@ -87,13 +92,11 @@ public class Analyzer
         dRegret = new double[numDefenders];
         dBestOf = new double[numDefenders];
         //for attacker
-        for(int d = 0; d < points.length; d++)
-        {
-            int max = maximum(points[d]);
-            for(int a = 0; a < points[d].length; a++)
-            {
-                aRegret[a] += (max - points[d][a]) / (double) numDefenders;
-                if(points[d][a] == max)
+        for (int[] point : points) {
+            int max = maximum(point);
+            for (int a = 0; a < point.length; a++) {
+                aRegret[a] += (max - point[a]) / (double) numDefenders;
+                if (point[a] == max)
                     aBestOf[a]++;
             }
         }
@@ -111,8 +114,7 @@ public class Analyzer
                     dBestOf[d]++;
             }
         }
-
-
+        //print out results
         printResults();
         printAverages();
         printMedians();
@@ -121,6 +123,11 @@ public class Analyzer
         printBestOf();
     }
 
+    /**
+     * Prints out the contents of array a and the names in array s
+     * @param a general array of values
+     * @param s names that correspond to array a
+     */
     public void print(double[] a, String[] s)
     {
         double[] ac = Arrays.copyOf(a,a.length);
@@ -130,6 +137,9 @@ public class Analyzer
         System.out.println(Arrays.toString(ac));
     }
 
+    /**
+     * Outputs in a 2D way the contents of the results
+     */
     public void printResults()
     {
         System.out.print("\t");
@@ -145,6 +155,9 @@ public class Analyzer
         }
     }
 
+    /**
+     * Outputs Averages
+     */
     public void printAverages()
     {
         System.out.println("Average Points");
@@ -152,6 +165,9 @@ public class Analyzer
         print(dAverage,defenderNames);
     }
 
+    /**
+     * Outputs Medians
+     */
     public void printMedians()
     {
         System.out.println("Medians");
@@ -159,6 +175,9 @@ public class Analyzer
         print(dMedian,defenderNames);
     }
 
+    /**
+     * Outputs Standard Deviations
+     */
     public void printStandardDev()
     {
         System.out.println("Standard Deviations");
@@ -166,6 +185,9 @@ public class Analyzer
         print(dStd,defenderNames);
     }
 
+    /**
+     * Outputs Regrets
+     */
     public void printRegret()
     {
         System.out.println("Average Regret");
@@ -173,6 +195,9 @@ public class Analyzer
         print(dRegret,defenderNames);
     }
 
+    /**
+     * Outputs the number of times an agent did the best
+     */
     public void printBestOf()
     {
         System.out.println("Instances Where Agent Was The Best");
@@ -180,6 +205,11 @@ public class Analyzer
         print(dBestOf,defenderNames);
     }
 
+    /**
+     * Sorts array a and s based on array a
+     * @param a general array of values
+     * @param s names for the elements in a
+     */
     public void sort(double[] a, String[] s)
     {
         for(int i = 0; i < a.length; i++)
@@ -199,6 +229,11 @@ public class Analyzer
         }
     }
 
+    /**
+     * Computes the median of array a
+     * @param a general array of values
+     * @return median of a
+     */
     public double median(int[] a)
     {
         int[] m = Arrays.copyOf(a,a.length);
@@ -209,6 +244,12 @@ public class Analyzer
             return m[m.length/2];
     }
 
+    /**
+     * Computes the standard deviation given an array a and an average
+     * @param a general array of values
+     * @param avg average of a
+     * @return standard deviation of a
+     */
     public double std(int[] a, double avg)
     {
         int[] m = Arrays.copyOf(a,a.length);
@@ -218,6 +259,11 @@ public class Analyzer
         return Math.sqrt(var/m.length);
     }
 
+    /**
+     * Find the maximum value of a
+     * @param a general array of values
+     * @return maximum value in a
+     */
     public int maximum(int[] a)
     {
         int max = a[0];
@@ -227,6 +273,11 @@ public class Analyzer
         return max;
     }
 
+    /**
+     * Finds the minimum value of a
+     * @param a general array of values
+     * @return minimum value of a
+     */
     public int minimum(int[] a)
     {
         int min = a[0];
@@ -236,12 +287,12 @@ public class Analyzer
         return  min;
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         String[] aS = {"Larry","Curly","Moe"};
         String[] dS = {"Bonnie","Clyde",};
         int[][] results = new int[2][3];
         results[0][0] = 9;results[0][1]=7;results[0][2]=6;
         results[1][0] = 2;results[1][1]=3;results[1][2]=6;
         new Analyzer(results,aS,dS);
-    }
+    }*/
 }
