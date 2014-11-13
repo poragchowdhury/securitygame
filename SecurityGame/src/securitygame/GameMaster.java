@@ -9,8 +9,8 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 5;
-        //generateGraphs(numGames);
+        int numGames = 1;
+        generateGraphs(numGames);
 
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         for(int i = 0; i < numGames; i++)
@@ -22,6 +22,7 @@ public class GameMaster
             try{Thread.sleep(2000);}catch (Exception e){e.printStackTrace();}
             d.kill();
             new DefenderHelper(d.getName(), d.getGraph());
+           
         }
 
         ArrayList<Attacker> attackers = new ArrayList<Attacker>();
@@ -29,10 +30,11 @@ public class GameMaster
         {
             AttackerHelper ah;
             String defName = defenders.get(i).getName();
-            String name = defenders.get(i).getGraph();
+            String name = defenders.get(i).getGraph()+"-hidden";
             Network net = Parser.parseGraph(defName+"-"+name+".graph");
             Attacker a = new Blitzkrieg(defName+"-"+name);
             net.printHiddenNetwork(a.getName());
+            
             new Thread(a).start();
             try{Thread.sleep(2000);}catch(Exception ex){ex.printStackTrace();}
             a.kill();
@@ -47,11 +49,12 @@ public class GameMaster
         for(int i = 0; i < numGraphs; i++)
         {
             Network n = new Network(i);
-            n.printNetwork();
-            /*n.shuffleNetwork();
             
-            n.printHiddenNetwork();
-            Network nt = Parser.parseGraph("0-hidden.graph");
+           // n.shuffleNetwork();
+            n.printNetwork();
+            
+            //n.printHiddenNetwork();
+            /*Network nt = Parser.parseGraph("0-hidden.graph");
     		nt.printNetwork();*/
         }
     }

@@ -197,7 +197,7 @@ public class Network {
 	{
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(name + "-hidden.graph", "UTF-8");
+			writer = new PrintWriter(fullGraphName + "-hidden.graph", "UTF-8");
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
@@ -311,8 +311,8 @@ public class Network {
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
-				writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
-                //writer.println(node.getPv()+","+node.getSv()+",-1");
+				//writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
+                writer.println(node.getPv()+","+node.getSv()+",-1");
 			}
 			writer.close();
 		}

@@ -123,6 +123,7 @@ public class DefenderHelper
         net.setName(name+"-"+graphFile);
         net.shuffleNetwork();//avoid predictable location of honeypot (last node in list)
         net.printNetwork();
+        net.printHiddenNetwork();
     }
 
     /**
