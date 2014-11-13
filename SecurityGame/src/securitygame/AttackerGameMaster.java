@@ -33,7 +33,8 @@ public class AttackerGameMaster
     	net.setName(4);
     	net.printHiddenNetwork("Blitzkrieg");
     	for(int i = 0; i < 3; i++){
-    		a = new Blitzkrieg("Blitzkrieg", "4");
+    		//a = new Blitzkrieg("Blitzkrieg", "4");
+            a = new Blitzkrieg("4");
     		a.run();
     		ah = new AttackerHelper(a.getName(), "4");
     	}

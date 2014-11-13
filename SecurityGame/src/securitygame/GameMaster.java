@@ -10,7 +10,7 @@ public class GameMaster
     public static void main(String[] args)
     {
         int numGames = 5;
-        //generateGraphs(numGames);
+        generateGraphs(numGames);
 
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         for(int i = 0; i < numGames; i++)

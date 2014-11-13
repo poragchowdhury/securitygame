@@ -250,7 +250,8 @@ public class Network {
 	{
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(attackerName + "-" + name + ".visible", "UTF-8");
+			//writer = new PrintWriter(attackerName + "-" + name + ".visible", "UTF-8");
+            writer = new PrintWriter(attackerName + "-" + fullGraphName + ".visible", "UTF-8");
 			for (int i = 0; i < nodes.length; i++)
 			{
 				//Node node = getNode(i);
@@ -310,7 +311,8 @@ public class Network {
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
-				writer.println(node.getPv()+","+node.getSv()+","+node.isHoneyPot());
+				//writer.println(node.getPv()+","+node.getSv()+","+node.isHoneyPot());
+                writer.println(node.getPv()+","+node.getSv()+",-1");
 			}
 			writer.close();
 		}
