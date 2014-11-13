@@ -15,27 +15,30 @@ public class Node
 	private int nodeID;
 	private int sv;
 	private int pv;
-	boolean isHoneyPot;
+	private int isHoneyPot;
 	ArrayList<Node> neighbor = new ArrayList<Node>();
     
 	/**
      * Empty Constructor.
      */
-	public Node(){}
+	public Node(){
+		neighbor = new ArrayList<Node>();
+	}
 
 	/**
      * Constructor.
      * @param nodeID An integer indicates nodeId
      * @param sv An integer indicates security value
      * @param pv An integer indicates point value
-     * @param isHoneyPot A boolean indicates HoneyPot
+     * @param isHoneyPot An integer indicates HoneyPot
      */
-	public Node(int nodeID, int sv, int pv, boolean isHoneyPot) {
+	public Node(int nodeID, int sv, int pv, int isHoneyPot) {
 		super();
 		this.nodeID = nodeID;
 		this.sv = sv;
 		this.pv = pv;
 		this.isHoneyPot = isHoneyPot;
+		this.neighbor = new ArrayList<Node>();
 	}
 
 	/**
@@ -134,7 +137,26 @@ public class Node
      */
 	public boolean isHoneyPot()
 	{
+		if(isHoneyPot == 1)
+			return true;
+		return false;
+	}
+
+	/**
+     * Returns the honeypot value
+     * @return integer i.e. returns the integer honeypot value of the node 
+     */	
+	public int getHoneyPot(){
 		return isHoneyPot;
+	}
+	
+	/**
+	 * Returns boolean if a node's honeypot status is known
+	*/
+	public boolean knowsHoneyPot(){
+		if(isHoneyPot == -1)
+			return false;
+		return true;
 	}
 
 	/**
@@ -142,7 +164,15 @@ public class Node
      */
 	public void setHoneyPot(boolean honeyPot)
 	{
-		this.isHoneyPot = honeyPot;
+		if(honeyPot)
+			this.isHoneyPot = 1;
+		else
+			this.isHoneyPot = 0;
+	}
+	
+	public void setHoneyPot(int honeyPot)
+	{
+		isHoneyPot = honeyPot;
 	}
 
 	/**
