@@ -10,7 +10,7 @@ public class GameMaster
     public static void main(String[] args)
     {
         int numGames = 5;
-        generateGraphs(numGames);
+        //generateGraphs(numGames);
 
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         for(int i = 0; i < numGames; i++)
@@ -18,10 +18,10 @@ public class GameMaster
         for(int i = 0; i < defenders.size(); i++)
         {
             Defender d = defenders.get(i);
-            /*new Thread(d).start();
+            new Thread(d).start();
             try{Thread.sleep(2000);}catch (Exception e){e.printStackTrace();}
             d.kill();
-            new DefenderHelper(d.getName(), d.getGraph());*/
+            new DefenderHelper(d.getName(), d.getGraph());
         }
 
         ArrayList<Attacker> attackers = new ArrayList<Attacker>();
@@ -36,6 +36,7 @@ public class GameMaster
             new Thread(a).start();
             try{Thread.sleep(2000);}catch(Exception ex){ex.printStackTrace();}
             a.kill();
+            ah = new AttackerHelper(a.getName(), defName+"-"+name);
             //attackers.add(a);
         }
 
