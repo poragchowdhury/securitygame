@@ -191,21 +191,20 @@ public class Network {
 	}
 
 	/**
-     * Print hidden network in a file
-     */	
+     * Print hidden network in a file.  private or unexplored nodes' rows will have -1.
+     * Edited by Marcus Gutierrez (11/12/2014 - 7:24 AM)
+     */
 	public void printHiddenNetwork()
 	{
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(fullGraphName + "-hidden.graph", "UTF-8");
+			writer = new PrintWriter(name + "-hidden.graph", "UTF-8");
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
-				//if (node.isPublic() == true)
-                if (node.getSv() == 0)
-				{
+				if (node.isCaptured() == true){
 					int neighborSize = node.neighbor.size();
-					
+
 					int neighborCounter = 0;
 					for(Node neighbor: node.neighbor)
 					{
@@ -213,22 +212,20 @@ public class Network {
 						{
 							if(neighborCounter==neighborSize-1)
 								writer.print(neighbor.getNodeID());
-							else 
+							else
 								writer.print(neighbor.getNodeID()+",");
 						}
 						neighborCounter++;
 					}
 					writer.println();
 				}
-				else 
+				else
 					writer.println("-1");
 			}
-			for (int i = 0; i < nodes.length; i++)
-			{
+			for (int i = 0; i < nodes.length; i++){
 				Node node = getNode(i);
-				//if(node.isPublic() == true)
-                if (node.getSv() == 0)
-					writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
+				if(node.isCaptured() == true)
+					writer.println(node.getPv()+","+node.getSv()+","+node.isHoneyPot());
 				else
 					writer.println("-1,-1,-1");
 			}
@@ -248,7 +245,7 @@ public class Network {
      * Print network in a file
      * @param attackerName name of the attacker
      */
-	public void printHiddenNetwork(String attackerName)
+	/*public void printHiddenNetwork(String attackerName)
 	{
 		PrintWriter writer;
 		try {
@@ -275,6 +272,61 @@ public class Network {
 			e.printStackTrace();
 		}
 	}
+*/
+/**
+	 * @author Marcus Gutierrez
+	 * @param attackerName Used to print hidden .visible graphs
+     * Print hidden network in a file.  private or unexplored nodes' rows will have -1.
+     */
+	public void printHiddenNetwork(String attackerName)
+	{
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter(attackerName + "-" + fullGraphName + ".visible", "UTF-8");
+			for (int i = 0; i < nodes.length; i++)
+			{
+				Node node = getNode(i);
+				if (node.isCaptured()){
+					int neighborSize = node.neighbor.size();
+
+					int neighborCounter = 0;
+					for(Node neighbor: node.neighbor)
+					{
+						if(neighbor.getNodeID()!=node.getNodeID())
+						{
+							if(neighborCounter==neighborSize-1)
+								writer.print(neighbor.getNodeID());
+							else
+								writer.print(neighbor.getNodeID()+",");
+						}
+						neighborCounter++;
+					}
+					writer.println();
+				}
+				else
+					writer.println("-1");
+
+			}
+			for (int i = 0; i < nodes.length; i++)
+			{
+				Node node = nodes[i];
+				if(nodes[i].isCaptured())
+					writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
+				else
+					writer.println("-1,-1,-1");
+			}
+			writer.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch ( Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 
 	/**
      * Print network in a file

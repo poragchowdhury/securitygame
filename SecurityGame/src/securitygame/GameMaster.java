@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +27,6 @@ public class GameMaster
             try{Thread.sleep(2000);}catch (Exception e){e.printStackTrace();}
             d.kill();
             new DefenderHelper(d.getName(), d.getGraph());
-           
         }
 
         ArrayList<Attacker> attackers = new ArrayList<Attacker>();
@@ -38,13 +38,23 @@ public class GameMaster
             String name = defenders.get(i).getGraph();
             Network net = Parser.parseGraph(defName+"-"+name+".graph");
             Attacker a = new Blitzkrieg(defName+"-"+name);
-            resetAttackerBudget(a.getName(), name);
-            net.printHiddenNetwork(a.getName());
-            
-            new Thread(a).start();
+            resetAttackerBudget(a.getName(), defName + "-" + name);
+            int budget = Parameters.ATTACKER_BUDGET;
+    	    while(budget > 0)
+            {
+                a = new Blitzkrieg(defName+"-"+name);
+                new Thread(a).start();
+                try{Thread.sleep(2000);}catch(Exception ex){ex.printStackTrace();}
+                a.kill();
+                ah = new AttackerHelper(a.getName(), defName+"-"+name);
+                budget = ah.getBudget();
+                System.out.println("Budget after move: " + budget);
+                System.out.println();
+    	    }
+            /*new Thread(a).start();
             try{Thread.sleep(2000);}catch(Exception ex){ex.printStackTrace();}
             a.kill();
-            ah = new AttackerHelper(a.getName(), defName+"-"+name);
+            ah = new AttackerHelper(a.getName(), defName+"-"+name);*/
             //attackers.add(a);
         }
 
