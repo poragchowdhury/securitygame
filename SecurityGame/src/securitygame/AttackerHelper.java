@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * Auxiliary class for creating and parsing .attack files.
@@ -30,6 +31,7 @@ public class AttackerHelper
     private String name;
     private PrintWriter pw;
     private int budget;
+    private Random r;
 
     /**
      * Constructor used by Attacker to initialize visibility file and keep track of attacker history.
@@ -61,66 +63,134 @@ public class AttackerHelper
         name = attackerName;
         budget = Parameters.ATTACKER_BUDGET;
         net = Parser.parseGraph(graphFile+".graph");
-        visibleNet = Parser.parseGraph(attackerName + "-" + graphFile + ".attackVis");
+        visibleNet = Parser.parseGraph(attackerName + "-" + graphFile + ".visible");
+        r = new Random();
         File csv = new File(attackerName+"-"+graphFile+".attack");
 		try{
 			CSVParser parser = CSVParser.parse(csv, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
 			for(CSVRecord csvRecord : parser){
 				Iterator<String> itr = csvRecord.iterator();
                 int mode = Integer.parseInt(itr.next());
+                int id;
                 switch (mode){
                 	case 0://attack node
-                    int id = Integer.parseInt(itr.next());
+                    id = Integer.parseInt(itr.next());
                     if(isValidAttack(id))
                     {
                         budget -= Parameters.ATTACK_RATE;
                         Node n = net.getNode(id);
-                        n.setSv(n.getSv()+1);
+                        int attackRoll = r.nextInt(Parameters.ATTACK_ROLL) + 1; 
+                        if(attackRoll >= n.getSv()){
+                        	visibleNet.getNode(id).setPv(n.getPv());
+                        	visibleNet.getNode(id).setSv(n.getSv());
+                        	visibleNet.getNode(id).setHoneyPot(n.getHoneyPot());
+                        	for(int j = 0; j < n.neighbor.size(); j++)
+                        		visibleNet.getNode(id).addNeighbor(visibleNet.getNode(n.neighbor.get(j).getNodeID()));
+                        	System.out.println("attack on node " + id + " was successful with a roll of " + attackRoll + "!");
+                        }else
+                        	System.out.println("attack on node " + id + " was unsuccessful with a roll of " + attackRoll);
+                        
                     }
                     else
                         budget -= Parameters.INVALID_RATE;
                     break;
-                    case 1://firewall
-                        int id1 = Integer.parseInt(itr.next());
-                        int id2 = Integer.parseInt(itr.next());
-                        if(isValidFirewall(id1,id2)){
-                            Node n1 = net.getNode(id1);
-                            Node n2 = net.getNode(id2);
-                            n1.neighbor.remove(n2);
-                            n2.neighbor.remove(n1);
-                            budget -= Parameters.FIREWALL_RATE;
+                	case 1://super attack node
+                        id = Integer.parseInt(itr.next());
+                        if(isValidSuperAttack(id))
+                        {
+                            budget -= Parameters.SUPERATTACK_RATE;
+                            Node n = net.getNode(id);
+                            
+                            int attackRoll = r.nextInt(Parameters.SUPERATTACK_ROLL) + 1; 
+                            if(attackRoll >= n.getSv()){
+                            	visibleNet.getNode(id).setPv(n.getPv());
+                            	visibleNet.getNode(id).setSv(n.getSv());
+                            	visibleNet.getNode(id).setHoneyPot(n.getHoneyPot());
+                            	for(int j = 0; j < n.neighbor.size(); j++)
+                            		visibleNet.getNode(id).addNeighbor(visibleNet.getNode(n.neighbor.get(j).getNodeID()));
+                            	System.out.println("super attack on node " + id + " was successful with a roll of " + attackRoll + "!");
+                            }else
+                            	System.out.println("super attack on node " + id + " was unsuccessful with a roll of " + attackRoll);
                         }
                         else
                             budget -= Parameters.INVALID_RATE;
                         break;
-                    case 2://honeypot
-                        int sv = Integer.parseInt(itr.next());
-                        int pv = Integer.parseInt(itr.next());
-                        ArrayList<Integer> newNeighbors = new ArrayList<Integer>();
-                        while (itr.hasNext())
-                            newNeighbors.add(Integer.parseInt(itr.next()));
-                        int[] n = new int[newNeighbors.size()];
-                        for(int i = 0; i < n.length; i++)
-                            n[i] = newNeighbors.get(i);
-                        if(isValidHoneypot(sv, pv, n)){
-                            net.addHoneypot(sv, pv, n);
-                            budget -= Parameters.HONEYPOT_RATE;
+                	case 2://probe security value
+                        id = Integer.parseInt(itr.next());
+                        if(isValidProbeSV(id))
+                        {
+                            budget -= Parameters.PROBE_SECURITY_RATE;
+                            Node n = net.getNode(id);
+                            
+                            int sv = n.getSv();
+                            visibleNet.getNode(id).setSv(sv);
+                            System.out.println("probed node " + id + "'s security value: " + sv);
                         }
                         else
                             budget -= Parameters.INVALID_RATE;
-                     break;
-                     default://some other case not defined
+                        break;
+                	case 3://probe point value
+                        id = Integer.parseInt(itr.next());
+                        if(isValidProbePV(id))
+                        {
+                            budget -= Parameters.PROBE_POINT_RATE;
+                            Node n = net.getNode(id);
+                            
+                            int pv = n.getPv();
+                            visibleNet.getNode(id).setPv(n.getPv());
+                            System.out.println("probed node " + id + "'s point value: " + pv);
+                        }
+                        else
+                            budget -= Parameters.INVALID_RATE;
+                        break;
+                	case 4://probe connections
+                        id = Integer.parseInt(itr.next());
+                        if(isValidProbeConn(id))
+                        {
+                            budget -= Parameters.PROBE_CONNECTIONS_RATE;
+                            Node n = net.getNode(id);
+                            
+                            int[] nodes = new int[n.neighbor.size()];
+                            for(int j = 0; j < n.neighbor.size(); j++){
+                        		nodes[j] = n.neighbor.get(j).getNodeID();
+                        		visibleNet.getNode(id).addNeighbor(visibleNet.getNode(nodes[j]));
+                            }
+                            System.out.print("probed node " + id + "'s connections: ");
+                            int k;
+                            for(k = 0; k < nodes.length - 1; k++)
+                            	System.out.print(nodes[k] + ",");
+                            System.out.println(nodes[k]);
+                        }
+                        else
+                            budget -= Parameters.INVALID_RATE;
+                        break;
+                	case 5://probe honey pot
+                        id = Integer.parseInt(itr.next());
+                        if(isValidProbeHP(id))
+                        {
+                            budget -= Parameters.PROBE_HONEY_RATE;
+                            Node n = net.getNode(id);
+                            
+                            visibleNet.getNode(id).setHoneyPot(n.isHoneyPot());
+                            System.out.println("probed node " + id + "'s honey pot: " + n.isHoneyPot());
+                        }
+                        else
+                            budget -= Parameters.INVALID_RATE;
+                        break;
+                	default://some other case not defined
                         budget -= Parameters.INVALID_RATE;
-                     break;
+                        break;
                 }
             }
             parser.close();
         }catch (Exception e){
             e.printStackTrace();
         }
-        net.setName(name+"-"+graphFile);
-        net.shuffleNetwork();//avoid predictable location of honeypot (last node in list)
-        net.printNetwork();
+        //net.setName(name+"-"+graphFile);
+        //net.shuffleNetwork();//avoid predictable location of honeypot (last node in list)
+        //net.printNetwork();
+		visibleNet.setName(attackerName + "-" + graphFile);
+		visibleNet.printVisibleNetwork();
     }
 
     /**
@@ -128,7 +198,6 @@ public class AttackerHelper
      */
     public void close()
     {
-    	visibleNet.printNetwork();
         pw.close();
     }
 
@@ -141,66 +210,104 @@ public class AttackerHelper
         pw.write("-1");
         pw.println();
     }
-
+    
     /**
-     * Adds 1 to a node security value if the node is not public or not already at maximum security.
-     * @param id The id of the node being strengthened
+     * Attacks a node
+     * @param id The id of the node being attacked
      */
-    public void strengthen(int id)
+    public void attack(int id)
     {
-        if(isValidStrengthen(id))
+        if(isValidAttack(id))
         {
             Node n = net.getNode(id);
-            budget -= Parameters.STRENGTHEN_RATE;
-            n.setSv(n.getSv());
-            pw.write("0,"+id);
+            budget -= Parameters.ATTACK_RATE;
+            pw.write("0," + id);
             pw.println();
         }
         else
             invalid();
     }
-
+    
+   
     /**
-     * Removes the edge between two nodes. Will not remove if doing so will isolate a node. Will not remove if there is no
-     * edge to remove.
-     *
-     * @param id1 First node's id
-     * @param id2 Second node's id
+     * Attacks a node with better chances
+     * @param id The id of the node being attacked
      */
-    public void firewall(int id1, int id2)
+    public void superAttack(int id)
     {
-        if(isValidFirewall(id1, id2))
+        if(isValidSuperAttack(id))
         {
-            Node n1 = net.getNode(id1);
-            Node n2 = net.getNode(id2);
-            n1.neighbor.remove(n2);
-            n2.neighbor.remove(n1);
-            budget -= Parameters.FIREWALL_RATE;
-            pw.write("1,"+id1+","+id2);
+            Node n = net.getNode(id);
+            budget -= Parameters.SUPERATTACK_RATE;
+            pw.write("1," + id);
             pw.println();
         }
         else
             invalid();
-
     }
-
+    
     /**
-     * Adds a honeypot node to the graph if possible. Otherwise charges an invalid.
-     * @param sv Security Value for the honeypot
-     * @param pv Point Value for the honeypot
-     * @param newNeighbors Array of Node ID's specifying which nodes to connect the honeypot to
+     * Probes a node to discover its security value
+     * @param id The id of the node being probed
      */
-    public void honeypot(int sv, int pv, int[] newNeighbors)
+    public void probeSecurity(int id)
     {
-        if(isValidHoneypot(sv, pv, newNeighbors))
+        if(isValidProbeSV(id))
         {
-            net.addHoneypot(sv, pv, newNeighbors);
-            budget -= Parameters.HONEYPOT_RATE;
-            String s = "2,"+sv+","+pv+",";
-            for(int i =0; i < newNeighbors.length-1;i++)
-                s = s + newNeighbors[i]+",";
-            s = s + newNeighbors[newNeighbors.length-1];
-            pw.write(s);
+            Node n = net.getNode(id);
+            budget -= Parameters.PROBE_SECURITY_RATE;
+            pw.write("2," + id);
+            pw.println();
+        }
+        else
+            invalid();
+    }
+    
+    /**
+     * Probes a node to discover its point value
+     * @param id The id of the node being probed
+     */
+    public void probePoint(int id)
+    {
+        if(isValidProbePV(id))
+        {
+            Node n = net.getNode(id);
+            budget -= Parameters.PROBE_POINT_RATE;
+            pw.write("3," + id);
+            pw.println();
+        }
+        else
+            invalid();
+    }
+    
+    /**
+     * Probes a node to discover its number of connections
+     * @param id The id of the node being probed
+     */
+    public void probeConnections(int id)
+    {
+        if(isValidProbeConn(id))
+        {
+            Node n = net.getNode(id);
+            budget -= Parameters.PROBE_CONNECTIONS_RATE;
+            pw.write("4," + id);
+            pw.println();
+        }
+        else
+            invalid();
+    }
+    
+    /**
+     * Probes a node to discover if it is a honey pot or not
+     * @param id The id of the node being probed
+     */
+    public void probeHoney(int id)
+    {
+        if(isValidProbeHP(id))
+        {
+            Node n = net.getNode(id);
+            budget -= Parameters.PROBE_HONEY_RATE;
+            pw.write("5," + id);
             pw.println();
         }
         else

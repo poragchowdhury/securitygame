@@ -9,21 +9,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-/**
- * Parser class is used for parsing the graph file.
- * Defender agents, Game master will use this class to parse a graph file. 
- *
- * @author      Porag Chowdhury, Anjon Basak
- * @version     2014/11/01
- */
-
 public class Parser
 {
-	/**
-	 * Returns a network object by parsing graph file
-	 * @param filename A string indicates the filename of the graph
-	 * @return returns the network object of the corresponding graph file
-	 */
 	public static Network parseGraph(String filename)
 	{
 		File csvTrainData = new File(filename);
@@ -46,8 +33,10 @@ public class Parser
 					while(itr.hasNext())
 					{
 						int x = Integer.parseInt(itr.next());
-						Node neighbor = network.getNode(x);
-						node.addNeighbor(neighbor);
+						if(x >= 0){
+							Node neighbor = network.getNode(x);
+							node.addNeighbor(neighbor);
+						}
 					}
 					if(neighborsCounter==numNodes-1)
 					{
@@ -59,23 +48,15 @@ public class Parser
 				}
 				else if(flag && (neighborsCounter<numNodes))
 				{
-					int counter = 0;
 					Node node = network.getNode(neighborsCounter);
 					while(itr.hasNext())
 					{
-						if(counter==2)
-						{
-							String x = itr.next();
-							node.setHoneyPot(Boolean.parseBoolean(x));
-						}
-						else if(counter<2)
-						{
-							int x  =  Integer.parseInt(itr.next());
-							node.setPv(x);
-							int y = Integer.parseInt(itr.next());
-							node.setSv(y);
-						}
-						counter+=2;
+						int x  =  Integer.parseInt(itr.next());
+						node.setPv(x);
+						int y = Integer.parseInt(itr.next());
+						node.setSv(y);
+						int z = Integer.parseInt(itr.next());
+						node.setHoneyPot(z);
 					}
 					neighborsCounter++;
 				}

@@ -1,5 +1,6 @@
 package securitygame;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -7,9 +8,10 @@ import java.util.Random;
  * probing for security values of a node, probing for the point value of a node, probing number of connections, and probing for honey pots.
  * All logic/equations/formulas/etc for how your attacker decides to select actions should be included in run()
  */
-public class Attacker implements Runnable
+public abstract class Attacker implements Runnable
 {
-    protected Network netVisible;
+    //protected Network netVisible;
+    protected ArrayList<Node> visibleNodes;
     protected AttackerHelper ah;
     protected String attackerName;
     protected String graph;
@@ -25,7 +27,8 @@ public class Attacker implements Runnable
     {
         attackerName = agentName;
         graph = graphFile;
-        netVisible = Parser.parseGraph(graphFile+".graph");
+        Network netVisible = Parser.parseGraph(graphFile+".graph");
+        
         ah = new AttackerHelper(netVisible, graphFile, agentName);
     }
 
@@ -86,16 +89,19 @@ public class Attacker implements Runnable
      */
     public void probeHoneypot(int id)
     {
-        ah.probeHoneypot(id);
+        ah.probeHoney(id);
     }
 
     /**
      * Add your decision logic here in your subclass
      */
-    public void run()
+    public final void run()
     {
-        System.out.println("please create your own subclass of this class for your defender");
+    	makeMove();
+        ah.close();
     }
+    
+    abstract void makeMove();
 
     /**
      * Get Agent Name used by GameMaster.

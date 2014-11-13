@@ -5,13 +5,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class GameMaster
+public class AttackerGameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 1;
-        generateGraphs(numGames);
-        /*ExecutorService exec = Executors.newFixedThreadPool(4);
+        /*int numGames = 1;
+        //generateGraphs(numGames);
+        
+        ExecutorService exec = Executors.newFixedThreadPool(1);
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         for(int i = 0; i < numGames;i++)
         {
@@ -24,8 +25,18 @@ public class GameMaster
         } catch (InterruptedException e) {e.printStackTrace();}
 
         for (Defender defender : defenders)
-            new DefenderHelper(defender.getName(), defender.getGraph());
-            */
+            new DefenderHelper(defender.getName(), defender.getGraph());*/
+    	
+    	Attacker a;
+    	AttackerHelper ah;
+    	Network net = Parser.parseGraph("4.graph");
+    	net.setName(4);
+    	net.printHiddenNetwork("Blitzkrieg");
+    	for(int i = 0; i < 3; i++){
+    		a = new Blitzkrieg("Blitzkrieg", "4");
+    		a.run();
+    		ah = new AttackerHelper(a.getName(), "4");
+    	}
     }
 
     public static void generateGraphs(int numGraphs)
