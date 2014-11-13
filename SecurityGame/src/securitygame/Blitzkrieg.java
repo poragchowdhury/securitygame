@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class Blitzkrieg extends Attacker {
 
-	public Blitzkrieg(String agentName, String graphFile) {
-		super(agentName, graphFile);
+	public Blitzkrieg(String graphFile) {
+		super("Blitzkrieg", graphFile);
 	}
 
 	@Override

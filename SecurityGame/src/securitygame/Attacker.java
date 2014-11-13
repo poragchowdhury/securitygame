@@ -15,6 +15,7 @@ public abstract class Attacker implements Runnable
     protected AttackerHelper ah;
     protected String attackerName;
     protected String graph;
+    private volatile boolean isAlive = true;
     /**
      * Constructor.
      * Parses Network stored in graphFile.
@@ -93,14 +94,23 @@ public abstract class Attacker implements Runnable
     }
 
     /**
-     * Add your decision logic here in your subclass
+     * Calls makeMove()
      */
     public final void run()
     {
-    	makeMove();
+        while(isAlive){
+            makeMove();
+            isAlive = false;
+        }
         ah.close();
     }
-    
+    /**
+     * kills long running defenders
+     */
+    public final void kill()
+    {
+        isAlive = false;
+    }
     abstract void makeMove();
 
     /**

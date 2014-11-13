@@ -12,3 +12,5 @@ SecurityGame/SecurityGame.iws
 *.graph
 *.class
 *.class
+*.attack
+*.visible
