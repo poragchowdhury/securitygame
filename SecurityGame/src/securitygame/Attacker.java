@@ -10,11 +10,14 @@ import java.util.Random;
  */
 public abstract class Attacker implements Runnable
 {
-    //protected Network netVisible;
     protected ArrayList<Node> visibleNodes;
     protected AttackerHelper ah;
     protected String attackerName;
-    protected String graph;
+    private String graph;
+    private Network netVisible;
+    protected ArrayList<Node> capturedNodes;
+    protected ArrayList<Node> availableNodes;
+    protected int budget;
     private volatile boolean isAlive = true;
     /**
      * Constructor.
@@ -28,9 +31,35 @@ public abstract class Attacker implements Runnable
     {
         attackerName = agentName;
         graph = graphFile;
-        Network netVisible = Parser.parseGraph(graphFile+".graph");
+        netVisible = Parser.parseGraph(agentName + "-" + graph+".visible");
+        capturedNodes = netVisible.getCapturedNodes();
+        availableNodes = netVisible.getAvailableNodes();
+        ah = new AttackerHelper(netVisible, graph, agentName);
+        budget = Parser.parseAttackerHistory(attackerName + "-" + graph + ".history");
         
-        ah = new AttackerHelper(netVisible, graphFile, agentName);
+        int i;
+		System.out.print("Available Nodes: ");
+		if(availableNodes.size() > 1){
+			for(i = 0; i < availableNodes.size() - 1; i++)
+				System.out.print(availableNodes.get(i).getNodeID() + ",");
+			System.out.println(availableNodes.get(i).getNodeID());
+		} else if(availableNodes.size() == 1) {
+			System.out.println(availableNodes.get(0).getNodeID());
+		} else {
+			System.out.println(-1);
+		}
+		
+		int j;
+		System.out.print("Captured Nodes: ");
+		if(availableNodes.size() > 1){
+		for(j = 0; j < capturedNodes.size() - 1; j++)
+			System.out.print(capturedNodes.get(j).getNodeID() + ",");
+		System.out.println(capturedNodes.get(j).getNodeID());
+		} else if(capturedNodes.size() == 1) {
+			System.out.println(capturedNodes.get(0).getNodeID());
+		} else {
+			System.out.println(-1);
+		}
     }
 
     /**
@@ -38,7 +67,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    public void attack(int id)
+    protected final void attack(int id)
     {
         ah.attack(id);
     }
@@ -48,7 +77,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    public void superAttack(int id)
+    protected final void superAttack(int id)
     {
         ah.superAttack(id);
     }
@@ -58,7 +87,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    public void probeSecurity(int id)
+    protected final void probeSecurity(int id)
     {
         ah.probeSecurity(id);
     }
@@ -68,7 +97,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    public void probePoints(int id)
+    protected void probePoints(int id)
     {
         ah.probePoint(id);
     }
@@ -78,7 +107,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    public void probeConnections(int id)
+    protected final void probeConnections(int id)
     {
         ah.probeConnections(id);
     }
@@ -88,36 +117,31 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    public void probeHoneypot(int id)
+    protected final void probeHoneypot(int id)
     {
         ah.probeHoney(id);
     }
 
     /**
-     * Calls makeMove()
+     * Add your decision logic here in your subclass
      */
     public final void run()
     {
-        while(isAlive){
+    	while(isAlive)
+        {
             makeMove();
             isAlive = false;
         }
         ah.close();
     }
-    /**
-     * kills long running defenders
-     */
-    public final void kill()
-    {
-        isAlive = false;
-    }
-    abstract void makeMove();
+    
+    public abstract void makeMove();
 
     /**
      * Get Agent Name used by GameMaster.
      * @return Name of defender
      */
-    public String getName()
+    public final String getName()
     {
         return attackerName;
     }
@@ -126,8 +150,15 @@ public abstract class Attacker implements Runnable
      * Get Game used by GameMaster
      * @return graph number
      */
-    public String getGraph()
+    public final String getGraph()
     {
         return graph;
+    }
+    /**
+     * kills long running defenders
+     */
+    public final void kill()
+    {
+        isAlive = false;
     }
 }

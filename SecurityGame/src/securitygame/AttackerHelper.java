@@ -4,8 +4,12 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +36,7 @@ public class AttackerHelper
     private PrintWriter pw;
     private int budget;
     private Random r;
+    private ArrayList<Node> availableNodes;
 
     /**
      * Constructor used by Attacker to initialize visibility file and keep track of attacker history.
@@ -41,7 +46,7 @@ public class AttackerHelper
      */
     public AttackerHelper(Network network, String graphFile, String attackerName)
     {
-        budget = Parameters.ATTACKER_BUDGET;
+    	budget = Parser.parseAttackerHistory(attackerName + "-" + graphFile + ".history");
         net = network;
         name = attackerName;
         try
@@ -61,12 +66,15 @@ public class AttackerHelper
      */
     public AttackerHelper(String attackerName, String graphFile){
         name = attackerName;
-        budget = Parameters.ATTACKER_BUDGET;
+        budget = Parser.parseAttackerHistory(attackerName + "-" + graphFile + ".history");
         net = Parser.parseGraph(graphFile+".graph");
         visibleNet = Parser.parseGraph(attackerName + "-" + graphFile + ".visible");
+        availableNodes = visibleNet.getAvailableNodes();
         r = new Random();
+        
         File csv = new File(attackerName+"-"+graphFile+".attack");
 		try{
+			pw = new PrintWriter(new BufferedWriter(new FileWriter(attackerName + "-" + graphFile + ".history", true)));
 			CSVParser parser = CSVParser.parse(csv, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
 			for(CSVRecord csvRecord : parser){
 				Iterator<String> itr = csvRecord.iterator();
@@ -75,7 +83,7 @@ public class AttackerHelper
                 switch (mode){
                 	case 0://attack node
                     id = Integer.parseInt(itr.next());
-                    if(isValidAttack(id))
+                    if(isAvailableNode(id) && isValidAttack(id))
                     {
                         budget -= Parameters.ATTACK_RATE;
                         Node n = net.getNode(id);
@@ -84,19 +92,25 @@ public class AttackerHelper
                         	visibleNet.getNode(id).setPv(n.getPv());
                         	visibleNet.getNode(id).setSv(n.getSv());
                         	visibleNet.getNode(id).setHoneyPot(n.getHoneyPot());
+                        	visibleNet.getNode(id).setCaptured(true);
                         	for(int j = 0; j < n.neighbor.size(); j++)
                         		visibleNet.getNode(id).addNeighbor(visibleNet.getNode(n.neighbor.get(j).getNodeID()));
                         	System.out.println("attack on node " + id + " was successful with a roll of " + attackRoll + "!");
-                        }else
+                        	pw.println("0," + id + ",true," + attackRoll);
+                        }else{
                         	System.out.println("attack on node " + id + " was unsuccessful with a roll of " + attackRoll);
-                        
+                        	pw.println("0," + id + ",false," + attackRoll);
+                        }
                     }
-                    else
+                    else{
+                    	System.out.println("Invalid attack on node "+ id + "!");
+                    	pw.println("-1");
                         budget -= Parameters.INVALID_RATE;
+                    }
                     break;
                 	case 1://super attack node
                         id = Integer.parseInt(itr.next());
-                        if(isValidSuperAttack(id))
+                        if(isAvailableNode(id) && isValidSuperAttack(id))
                         {
                             budget -= Parameters.SUPERATTACK_RATE;
                             Node n = net.getNode(id);
@@ -106,18 +120,25 @@ public class AttackerHelper
                             	visibleNet.getNode(id).setPv(n.getPv());
                             	visibleNet.getNode(id).setSv(n.getSv());
                             	visibleNet.getNode(id).setHoneyPot(n.getHoneyPot());
+                            	visibleNet.getNode(id).setCaptured(true);
                             	for(int j = 0; j < n.neighbor.size(); j++)
                             		visibleNet.getNode(id).addNeighbor(visibleNet.getNode(n.neighbor.get(j).getNodeID()));
                             	System.out.println("super attack on node " + id + " was successful with a roll of " + attackRoll + "!");
-                            }else
+                            	pw.println("1," + id + ",true," + attackRoll);
+                            }else{
                             	System.out.println("super attack on node " + id + " was unsuccessful with a roll of " + attackRoll);
+                            	pw.println("1," + id + ",false," + attackRoll);
+                            }
                         }
-                        else
+                        else{
+                        	System.out.println("Invalid superattack on node "+ id + "!");
+                        	pw.println("-1");
                             budget -= Parameters.INVALID_RATE;
+                        }
                         break;
                 	case 2://probe security value
                         id = Integer.parseInt(itr.next());
-                        if(isValidProbeSV(id))
+                        if(isAvailableNode(id) && isValidProbeSV(id))
                         {
                             budget -= Parameters.PROBE_SECURITY_RATE;
                             Node n = net.getNode(id);
@@ -125,13 +146,17 @@ public class AttackerHelper
                             int sv = n.getSv();
                             visibleNet.getNode(id).setSv(sv);
                             System.out.println("probed node " + id + "'s security value: " + sv);
+                            pw.println("2," + id + "," + sv);
                         }
-                        else
+                        else{
+                        	System.out.println("Invalid probing of security value on node "+ id + "!");
+                        	pw.println("-1");
                             budget -= Parameters.INVALID_RATE;
+                        }
                         break;
                 	case 3://probe point value
                         id = Integer.parseInt(itr.next());
-                        if(isValidProbePV(id))
+                        if(isAvailableNode(id) && isValidProbePV(id))
                         {
                             budget -= Parameters.PROBE_POINT_RATE;
                             Node n = net.getNode(id);
@@ -139,13 +164,17 @@ public class AttackerHelper
                             int pv = n.getPv();
                             visibleNet.getNode(id).setPv(n.getPv());
                             System.out.println("probed node " + id + "'s point value: " + pv);
+                            pw.println("3," + id + "," + pv);
                         }
-                        else
+                        else{
+                        	System.out.println("Invalid probing of point value on node "+ id + "!");
+                        	pw.println("-1");
                             budget -= Parameters.INVALID_RATE;
+                        }
                         break;
                 	case 4://probe connections
                         id = Integer.parseInt(itr.next());
-                        if(isValidProbeConn(id))
+                        if(isAvailableNode(id) && isValidProbeConn(id))
                         {
                             budget -= Parameters.PROBE_CONNECTIONS_RATE;
                             Node n = net.getNode(id);
@@ -156,39 +185,50 @@ public class AttackerHelper
                         		visibleNet.getNode(id).addNeighbor(visibleNet.getNode(nodes[j]));
                             }
                             System.out.print("probed node " + id + "'s connections: ");
+                            pw.println("4," + id + ",");
                             int k;
-                            for(k = 0; k < nodes.length - 1; k++)
+                            for(k = 0; k < nodes.length - 1; k++){
                             	System.out.print(nodes[k] + ",");
+                            	pw.print(nodes[k] + ",");
+                            }
                             System.out.println(nodes[k]);
+                            pw.println(nodes[k]);
                         }
-                        else
+                        else{
+                        	System.out.println("Invalid probing of connections on node "+ id + "!");
+                        	pw.println("-1");
                             budget -= Parameters.INVALID_RATE;
+                        }
                         break;
                 	case 5://probe honey pot
                         id = Integer.parseInt(itr.next());
-                        if(isValidProbeHP(id))
+                        if(isAvailableNode(id) && isValidProbeHP(id))
                         {
                             budget -= Parameters.PROBE_HONEY_RATE;
                             Node n = net.getNode(id);
                             
                             visibleNet.getNode(id).setHoneyPot(n.isHoneyPot());
                             System.out.println("probed node " + id + "'s honey pot: " + n.isHoneyPot());
+                            pw.println("5," + id + "," + n.isHoneyPot());
                         }
-                        else
+                        else{
+                        	System.out.println("Invalid probing of honey pot on node "+ id + "!");
+                        	pw.println("-1");
                             budget -= Parameters.INVALID_RATE;
+                        }
                         break;
                 	default://some other case not defined
+                		System.out.println("Invalid Move!");
+                		pw.println("-1");
                         budget -= Parameters.INVALID_RATE;
                         break;
                 }
             }
             parser.close();
+            pw.close();
         }catch (Exception e){
             e.printStackTrace();
         }
-        //net.setName(name+"-"+graphFile);
-        //net.shuffleNetwork();//avoid predictable location of honeypot (last node in list)
-        //net.printNetwork();
 		visibleNet.setName(attackerName + "-" + graphFile);
 		visibleNet.printVisibleNetwork();
     }
@@ -363,5 +403,10 @@ public class AttackerHelper
         if(budget < Parameters.PROBE_HONEY_RATE || n == null)
             return false;
         return true;
+    }
+    
+    private boolean isAvailableNode(int id){
+    	Node n = new Node(id);
+    	return availableNodes.contains(n);
     }
 }

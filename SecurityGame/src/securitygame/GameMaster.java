@@ -1,5 +1,9 @@
 package securitygame;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,8 +13,8 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 1;
-        generateGraphs(numGames);
+        int numGames = 5;
+        //generateGraphs(numGames);
 
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         for(int i = 0; i < numGames; i++)
@@ -30,9 +34,11 @@ public class GameMaster
         {
             AttackerHelper ah;
             String defName = defenders.get(i).getName();
-            String name = defenders.get(i).getGraph()+"-hidden";
+            //String name = defenders.get(i).getGraph()+"-hidden";
+            String name = defenders.get(i).getGraph();
             Network net = Parser.parseGraph(defName+"-"+name+".graph");
             Attacker a = new Blitzkrieg(defName+"-"+name);
+            resetAttackerBudget(a.getName(), name);
             net.printHiddenNetwork(a.getName());
             
             new Thread(a).start();
@@ -57,5 +63,12 @@ public class GameMaster
             /*Network nt = Parser.parseGraph("0-hidden.graph");
     		nt.printNetwork();*/
         }
+    }
+    private static void resetAttackerBudget(String attackerName, String defenseGraph){
+    	try {
+			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(attackerName + "-" + defenseGraph + ".history", false)));
+			pw.print("");
+			pw.close();
+		} catch (IOException e) {e.printStackTrace();}
     }
 }

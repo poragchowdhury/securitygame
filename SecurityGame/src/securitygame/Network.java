@@ -201,7 +201,8 @@ public class Network {
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
-				if (node.isPublic() == true)
+				//if (node.isPublic() == true)
+                if (node.getSv() == 0)
 				{
 					int neighborSize = node.neighbor.size();
 					
@@ -225,7 +226,8 @@ public class Network {
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
-				if(node.isPublic() == true)
+				//if(node.isPublic() == true)
+                if (node.getSv() == 0)
 					writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
 				else
 					writer.println("-1,-1,-1");
@@ -386,7 +388,8 @@ public class Network {
 		for (int i = 0; i < nodes.length; i++)
 		{
 			Node node = getNode(i);
-			s+=node.getPv()+","+node.getSv()+","+node.isPublic()+"\n";
+			//s+=node.getPv()+","+node.getSv()+","+node.isPublic()+"\n";
+            s+=node.getPv()+","+node.getSv()+","+node.getHoneyPot()+"\n";
 		}
 		return s;
 	}
@@ -622,4 +625,31 @@ public class Network {
 			//System.out.println(nodepointvalue);
 		//}
 	}*/
+    /**
+	 * Returns an array list of all the captured nodes
+	 * @return all captured nodes in the network
+	 */
+	public ArrayList<Node> getCapturedNodes(){
+		ArrayList<Node> capturedNodes = new ArrayList<Node>();
+		for(int i = 0; i < nodes.length; i++)
+			if(nodes[i].isCaptured())
+				capturedNodes.add(nodes[i]);
+		return capturedNodes;
+	}
+
+	/**
+	 * Returns an array list of all the available nodes for attacking
+	 * @return all non-captured available nodes in the network
+	 */
+	public ArrayList<Node> getAvailableNodes(){
+		ArrayList<Node> availableNodes = new ArrayList<Node>();
+		for(int i = 0; i < nodes.length; i++){
+			for(int j = 0; j < nodes[i].neighbor.size(); j++){
+				Node neighbor = nodes[i].neighbor.get(j);
+				if(!neighbor.isCaptured() && !availableNodes.contains(neighbor))
+					availableNodes.add(neighbor);
+			}
+		}
+		return availableNodes;
+	}
 }

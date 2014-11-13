@@ -1,5 +1,9 @@
 package securitygame;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,36 +12,35 @@ import java.util.concurrent.TimeUnit;
 public class AttackerGameMaster
 {
     public static void main(String[] args)
-    {
-        /*int numGames = 1;
-        //generateGraphs(numGames);
-        
-        ExecutorService exec = Executors.newFixedThreadPool(1);
-        ArrayList<Defender> defenders = new ArrayList<Defender>();
-        for(int i = 0; i < numGames;i++)
-        {
-            defenders.add(new WhatDoesThisButtonDoDefender(i+""));
-            exec.execute(defenders.get(defenders.size()-1));
-        }
-		exec.shutdown();
-		try {//wait for it to finish
-          exec.awaitTermination(5*numGames, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {e.printStackTrace();}
-
-        for (Defender defender : defenders)
-            new DefenderHelper(defender.getName(), defender.getGraph());*/
-    	
+    {	
+    	String attackerName = "Blitzkrieg";
+    	String defender = "WhatDoesThisButtonDo";
+    	String defenseGraph = "4";
+    	String fullGraphName = defender + "-" + defenseGraph;
     	Attacker a;
     	AttackerHelper ah;
-    	Network net = Parser.parseGraph("4.graph");
-    	net.setName(4);
-    	net.printHiddenNetwork("Blitzkrieg");
-    	for(int i = 0; i < 3; i++){
-    		//a = new Blitzkrieg("Blitzkrieg", "4");
-            a = new Blitzkrieg("4");
+    	Network net = Parser.parseGraph(defender + "-" + defenseGraph + ".defence");
+    	net.setName(defender + "-" + defenseGraph);
+    	net.printHiddenNetwork(attackerName);
+    	
+    	resetAttackerBudget(attackerName, fullGraphName);
+    	int budget = Parameters.ATTACKER_BUDGET;
+    	while(budget > 0){
+    		a = new Blitzkrieg(fullGraphName);
     		a.run();
-    		ah = new AttackerHelper(a.getName(), "4");
+    		ah = new AttackerHelper(a.getName(), fullGraphName);
+    		budget = ah.getBudget();
+    		System.out.println("Budget after move: " + budget);
+    		System.out.println();
     	}
+    }
+    
+    private static void resetAttackerBudget(String attackerName, String defenseGraph){
+    	try {
+			PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(attackerName + "-" + defenseGraph + ".history", false)));
+			pw.print("");
+			pw.close();
+		} catch (IOException e) {e.printStackTrace();}
     }
 
     public static void generateGraphs(int numGraphs)

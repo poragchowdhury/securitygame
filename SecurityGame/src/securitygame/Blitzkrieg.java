@@ -9,7 +9,7 @@ public class Blitzkrieg extends Attacker {
 	}
 
 	@Override
-	void makeMove() {
+	public void makeMove() {
 		Random r = new Random();
 		int nodeID = r.nextInt(10);
 		int move = r.nextInt(6);

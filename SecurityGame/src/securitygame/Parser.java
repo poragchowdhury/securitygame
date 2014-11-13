@@ -70,4 +70,54 @@ public class Parser
 		}
 		return null;
 	}
+    /**
+	 * Parses attacker's .history file and calculates and returns the attacker's current budget
+	 * @author Marcus Gutierrez
+	 * @param filename
+	 * @return attacker's current budget
+	 */
+	public static int parseAttackerHistory(String filename)
+	{
+		File csvTrainData = new File(filename);
+		try
+		{
+			CSVParser parser = CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
+			CSVParser parseRecords= CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
+			int budget = Parameters.ATTACKER_BUDGET;
+			for (CSVRecord csvRecord : parser)
+			{
+				Iterator<String> itr = csvRecord.iterator();
+				int move = Integer.parseInt(itr.next());
+				switch(move){
+				case 0:
+					budget -= Parameters.ATTACK_RATE;
+					break;
+				case 1:
+					budget -= Parameters.SUPERATTACK_RATE;
+					break;
+				case 2:
+					budget -= Parameters.PROBE_SECURITY_RATE;
+					break;
+				case 3:
+					budget -= Parameters.PROBE_POINT_RATE;
+					break;
+				case 4:
+					budget -= Parameters.PROBE_CONNECTIONS_RATE;
+					break;
+				case 5:
+					budget -= Parameters.PROBE_HONEY_RATE;
+					break;
+				case -1: default:
+					budget -= Parameters.INVALID_RATE;
+					break;
+				}
+			}
+			return budget;
+		}
+		catch(NumberFormatException nfe){
+			return Parameters.ATTACKER_BUDGET;
+		}
+		catch (IOException e) { e.printStackTrace();}
+		return Parameters.ATTACKER_BUDGET;
+	}
 }

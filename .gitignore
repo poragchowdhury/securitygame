@@ -16,3 +16,6 @@ SecurityGame/SecurityGame.iws
 *.visible
 *.class
 *.class
+*.class
+*.class
+*.history
