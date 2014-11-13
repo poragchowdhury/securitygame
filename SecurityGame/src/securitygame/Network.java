@@ -226,7 +226,7 @@ public class Network {
 			{
 				Node node = getNode(i);
 				if(node.isPublic() == true)
-					writer.println(node.getPv()+","+node.getSv()+","+node.isHoneyPot());
+					writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
 				else
 					writer.println("-1,-1,-1");
 			}
@@ -311,8 +311,8 @@ public class Network {
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
-				//writer.println(node.getPv()+","+node.getSv()+","+node.isHoneyPot());
-                writer.println(node.getPv()+","+node.getSv()+",-1");
+				writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
+                //writer.println(node.getPv()+","+node.getSv()+",-1");
 			}
 			writer.close();
 		}
