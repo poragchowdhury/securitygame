@@ -52,6 +52,7 @@ public class Network {
 	{
 		name = networkName;
 		fullGraphName = "" + name;
+        nodes = new Node[numNodes];
 		for(int i=0; i<numNodes; i++){
 			nodes[i] = new Node();
 			nodes[i].setNodeID(i);
@@ -70,8 +71,8 @@ public class Network {
      * Sets netwrok full name.
      * @param name network name
      */
-	public void setName(String s) {
-		fullGraphName = s;
+	public void setName(String name) {
+		fullGraphName = name;
 	}
 
 	/**
@@ -243,7 +244,7 @@ public class Network {
 
 	/**
      * Print network in a file
-     * @param attackername name of the attacker
+     * @param attackerName name of the attacker
      */
 	public void printHiddenNetwork(String attackerName)
 	{

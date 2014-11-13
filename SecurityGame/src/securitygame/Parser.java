@@ -23,6 +23,7 @@ public class Parser
 			int numNodes = parseRecords.getRecords().size()/2;
 			//Network network = new Network(filename+"1",numNodes);
             Network network = new Network(0,numNodes);
+            network.setName(filename.substring(0,filename.indexOf(".graph")));
 			boolean flag = false;
 			for (CSVRecord csvRecord : parser) 
 			{
