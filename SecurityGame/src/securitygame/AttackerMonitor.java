@@ -4,16 +4,12 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -40,10 +36,12 @@ public class AttackerMonitor
     private PrintWriter history;
     
     private int budget;
+    private int points;
     private Random r;
     private ArrayList<Node> availableNodes;
 
-    public AttackerMonitor(String attackerName, String defenderName, String graphName){
+    /*public AttackerMonitor(String attackerName, String defenderName, String graphName){
+        points = 0;
     	budget = Parameters.ATTACKER_BUDGET;
     	System.out.println("Initial Budget1: " + budget);
     	r = new Random();
@@ -73,7 +71,37 @@ public class AttackerMonitor
 			}
 		} catch (IOException e) {e.printStackTrace();}
     	history.close();
+    }*/
+
+    public AttackerMonitor(String attackerName, String defenderName, String graphName){
+        budget = Parameters.ATTACKER_BUDGET;
+        System.out.println("Initial Budget1: " + budget);
+        r = new Random();
+        this.attackerName = attackerName;
+        this.defenderName = defenderName;
+        this.graphName = graphName;
+        try {
+        net = Parser.parseGraph(defenderName + "-" + graphName + ".graph");
+        visibleNet = Parser.parseGraph(defenderName + "-" + graphName + "-hidden.graph");
+        availableNodes = visibleNet.getAvailableNodes();
+
+        //clears history and adds the public nodes to the history
+        history = new PrintWriter(new FileWriter(attackerName + "-" + defenderName + "-" + graphName + ".history", false));
+        ArrayList<Node> publicNodes = visibleNet.getCapturedNodes();
+        System.out.println("PUBLIC NODES: " + publicNodes.size());
+        for(int i = 0; i < publicNodes.size(); i++){
+            String publicString = "6," + publicNodes.get(i).getNodeID()+",";
+            ArrayList<Node> neighbors = publicNodes.get(i).getNeighborList();
+            for(int j = 0; j < neighbors.size(); j++)
+                publicString += neighbors.get(j).getNodeID() + ",";
+                publicString = publicString.substring(0, publicString.length() - 1);
+                history.println(publicString);
+            }
+            history.close();
+        } catch (IOException e) {e.printStackTrace();}
+        history.close();
     }
+
     
     public void readMove(){
 		try{
@@ -105,6 +133,7 @@ public class AttackerMonitor
                         	}
                         	neighbors = neighbors.substring(0, neighbors.length()-1);
                         	System.out.println("attack on node " + id + " was successful with a roll of " + attackRoll + "!");
+                            points += visibleNet.getNode(id).getPv();
                         	history.println("0," + id + ",true," + attackRoll + "," + n.getPv() + "," + n.getSv() + "," + n.getHoneyPot() + neighbors);
                         }else{
                         	System.out.println("attack on node " + id + " was unsuccessful with a roll of " + attackRoll);
@@ -137,6 +166,7 @@ public class AttackerMonitor
                             	neighbors = neighbors.substring(0, neighbors.length()-1);
                             	System.out.println("super attack on node " + id + " was successful with a roll of " + attackRoll + "!");
                             	history.println("1," + id + ",true," + attackRoll + "," + n.getPv() + "," + n.getSv() + "," + n.getHoneyPot() + neighbors);
+                                points += visibleNet.getNode(id).getPv();
                             }else{
                             	System.out.println("super attack on node " + id + " was unsuccessful with a roll of " + attackRoll);
                             	history.println("1," + id + ",false," + attackRoll);
@@ -299,5 +329,10 @@ public class AttackerMonitor
     private boolean isAvailableNode(int id){
     	Node n = new Node(id);
     	return availableNodes.contains(n);
+    }
+
+    public int getPoints()
+    {
+        return points;
     }
 }

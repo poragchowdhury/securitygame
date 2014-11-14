@@ -6,6 +6,8 @@ import java.util.ArrayList;
  * Attacker agent. The actions for the attacker in this game include attacking a node, super attacking a node, 
  * probing for security values of a node, probing for the point value of a node, probing number of connections, and probing for honey pots.
  * All logic/equations/formulas/etc for how your attacker decides to select actions should be included in run()
+ * @author Marcus Gutierrez
+ * @version 2014/11/14
  */
 public abstract class Attacker implements Runnable
 {
@@ -140,7 +142,7 @@ public abstract class Attacker implements Runnable
      * Get Agent Name used by GameMaster.
      * @return Name of defender
      */
-    public static String getName()
+    public String getName()
     {
         return attackerName;
     }

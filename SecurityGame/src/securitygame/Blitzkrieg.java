@@ -2,15 +2,24 @@ package securitygame;
 
 import java.util.Random;
 
+/**
+ * Example attacker agent.
+ * @author Marcus Gutierrez
+ * @version 2014/11/14
+ */
 public class Blitzkrieg extends Attacker {
-
-	public static final String attackerName = "Blitzkrieg";
-	
+    /**
+     * Constructor
+     * @param defenderName defender's name
+     * @param graphFile graph to read
+     */
 	public Blitzkrieg(String defenderName, String graphFile) {
-		super(attackerName, defenderName, graphFile);
+		super("Blitzkrieg", defenderName, graphFile);
 	}
 
-	@Override
+    /**
+     * Example Logic
+     */
 	public void makeMove() {
 		Random r = new Random();
 		int nodeID = r.nextInt(10);
@@ -28,9 +37,4 @@ public class Blitzkrieg extends Attacker {
 		else if(move == 5)
 			probeHoneypot(nodeID);
 	}
-	
-	public static String getName(){
-		return attackerName;
-	}
-
 }
