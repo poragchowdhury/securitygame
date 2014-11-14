@@ -1,7 +1,6 @@
 package securitygame;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Attacker agent. The actions for the attacker in this game include attacking a node, super attacking a node, 
@@ -11,8 +10,8 @@ import java.util.Random;
 public abstract class Attacker implements Runnable
 {
     protected ArrayList<Node> visibleNodes;
-    protected AttackerHelper ah;
-    protected String attackerName;
+    private AttackerHelper ah;
+    protected static String attackerName = "defaultAttacker"; //Overwrite this variable in your attacker subclass
     private String graph;
     private Network netVisible;
     protected ArrayList<Node> capturedNodes;
@@ -25,41 +24,17 @@ public abstract class Attacker implements Runnable
      * Performs Attacker logic to select actions.
      * Outputs [agentName]-[graphFile].attack with selected actions
      * @param agentName Attacker agent's name i.e. "Sharks"
-     * @param graphFile String containing number of visibility network i.e. "1914"
+     * @param defenderName Defender agent's name i.e. "Jets"
+     * @param graphName String containing number of visibility network i.e. "1914"
      */
-    public Attacker(String agentName, String graphFile)
+    public Attacker(String agentName, String defenderName, String graphName)
     {
         attackerName = agentName;
-        graph = graphFile;
-        netVisible = Parser.parseGraph(agentName + "-" + graph+".visible");
+        netVisible = Parser.parseAttackerHistory(agentName, defenderName, graphName);
         capturedNodes = netVisible.getCapturedNodes();
         availableNodes = netVisible.getAvailableNodes();
-        ah = new AttackerHelper(netVisible, graph, agentName);
-        budget = Parser.parseAttackerHistory(attackerName + "-" + graph + ".history");
-        
-        int i;
-		System.out.print("Available Nodes: ");
-		if(availableNodes.size() > 1){
-			for(i = 0; i < availableNodes.size() - 1; i++)
-				System.out.print(availableNodes.get(i).getNodeID() + ",");
-			System.out.println(availableNodes.get(i).getNodeID());
-		} else if(availableNodes.size() == 1) {
-			System.out.println(availableNodes.get(0).getNodeID());
-		} else {
-			System.out.println(-1);
-		}
-		
-		int j;
-		System.out.print("Captured Nodes: ");
-		if(availableNodes.size() > 1){
-		for(j = 0; j < capturedNodes.size() - 1; j++)
-			System.out.print(capturedNodes.get(j).getNodeID() + ",");
-		System.out.println(capturedNodes.get(j).getNodeID());
-		} else if(capturedNodes.size() == 1) {
-			System.out.println(capturedNodes.get(0).getNodeID());
-		} else {
-			System.out.println(-1);
-		}
+        budget = Parser.parseAttackerBudget(attackerName, defenderName, graphName);
+        ah = new AttackerHelper(netVisible, budget, agentName, defenderName, graphName);
     }
 
     /**
@@ -129,6 +104,30 @@ public abstract class Attacker implements Runnable
     {
     	while(isAlive)
         {
+    		
+    		int i;
+    		System.out.print("Available Nodes: ");
+    		if(availableNodes.size() > 1){
+    			for(i = 0; i < availableNodes.size() - 1; i++)
+    				System.out.print(availableNodes.get(i).getNodeID() + ",");
+    			System.out.println(availableNodes.get(i).getNodeID());
+    		} else if(availableNodes.size() == 1) {
+    			System.out.println(availableNodes.get(0).getNodeID());
+    		} else {
+    			System.out.println(-1);
+    		}
+    		
+    		int j;
+    		System.out.print("Captured Nodes: ");
+    		if(availableNodes.size() > 1){
+    		for(j = 0; j < capturedNodes.size() - 1; j++)
+    			System.out.print(capturedNodes.get(j).getNodeID() + ",");
+    		System.out.println(capturedNodes.get(j).getNodeID());
+    		} else if(capturedNodes.size() == 1) {
+    			System.out.println(capturedNodes.get(0).getNodeID());
+    		} else {
+    			System.out.println(-1);
+    		}
             makeMove();
             isAlive = false;
         }
@@ -141,7 +140,7 @@ public abstract class Attacker implements Runnable
      * Get Agent Name used by GameMaster.
      * @return Name of defender
      */
-    public final String getName()
+    public static String getName()
     {
         return attackerName;
     }

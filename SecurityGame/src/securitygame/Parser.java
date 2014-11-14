@@ -19,9 +19,7 @@ public class Parser
 			CSVParser parser = CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
 			CSVParser parseRecords= CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
 			int neighborsCounter = 0;
-			int valueCounter = 0;
 			int numNodes = parseRecords.getRecords().size()/2;
-			//Network network = new Network(filename+"1",numNodes);
             Network network = new Network(0,numNodes);
             network.setName(filename.substring(0,filename.indexOf(".")));
 			boolean flag = false;
@@ -52,7 +50,7 @@ public class Parser
 					Node node = network.getNode(neighborsCounter);
 					while(itr.hasNext())
 					{
-						int x  =  Integer.parseInt(itr.next());
+						int x  = Integer.parseInt(itr.next());
 						node.setPv(x);
 						int y = Integer.parseInt(itr.next());
 						node.setSv(y);
@@ -71,53 +69,166 @@ public class Parser
 		return null;
 	}
     /**
-	 * Parses attacker's .history file and calculates and returns the attacker's current budget
+	 * Parses attacker's .history file and calculates and returns the attacker's network
 	 * @author Marcus Gutierrez
-	 * @param filename
-	 * @return attacker's current budget
+	 * @param attackerName
+	 * @param defenderName
+	 * @param graphName
+	 * @return attacker's visible graph
 	 */
-	public static int parseAttackerHistory(String filename)
+	public static Network parseAttackerHistory(String attackerName, String defenderName, String graphName)
 	{
-		File csvTrainData = new File(filename);
+		Network hidden = parseGraph(defenderName + "-" + graphName + "-hidden.graph");
+		String historyFile = attackerName + "-" + defenderName + "-" + graphName + ".history";
+		File csvTrainData = new File(historyFile);
 		try
 		{
 			CSVParser parser = CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
-			CSVParser parseRecords= CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
-			int budget = Parameters.ATTACKER_BUDGET;
 			for (CSVRecord csvRecord : parser)
 			{
 				Iterator<String> itr = csvRecord.iterator();
 				int move = Integer.parseInt(itr.next());
+				int id;
+				Node node;
+				boolean attackSuccess;
+				int roll;
+				int sv;
+				int pv;
+				int hp;
 				switch(move){
-				case 0:
-					budget -= Parameters.ATTACK_RATE;
+				case 0: //attack
+					//budget -= Parameters.ATTACK_RATE;
+					id = Integer.parseInt(itr.next());
+					node = hidden.getNode(id);
+					attackSuccess = Boolean.parseBoolean(itr.next());
+					roll = Integer.parseInt(itr.next());
+					if(roll > node.getBestRoll())
+						node.setBestRoll(roll);
+					if(attackSuccess){
+						pv = Integer.parseInt(itr.next());
+						node.setPv(pv);
+						sv = Integer.parseInt(itr.next());
+						node.setSv(sv);
+						hp = Integer.parseInt(itr.next());
+						node.setHoneyPot(hp);
+						node.setNeighborAmount(0);
+						node.setCaptured(true);
+						while(itr.hasNext())
+							node.addNeighbor(hidden.getNode(Integer.parseInt(itr.next())));
+					}
 					break;
-				case 1:
-					budget -= Parameters.SUPERATTACK_RATE;
+				case 1: //superattack
+					//budget -= Parameters.SUPERATTACK_RATE;
+					id = Integer.parseInt(itr.next());
+					node = hidden.getNode(id);
+					attackSuccess = Boolean.parseBoolean(itr.next());
+					roll = Integer.parseInt(itr.next());
+					if(roll > node.getBestRoll())
+						node.setBestRoll(roll);
+					if(attackSuccess){
+						pv = Integer.parseInt(itr.next());
+						node.setPv(pv);
+						sv = Integer.parseInt(itr.next());
+						node.setSv(sv);
+						hp = Integer.parseInt(itr.next());
+						System.out.println("(" + pv + "," + sv + "," + hp + ")");
+						node.setHoneyPot(hp);
+						node.setNeighborAmount(0);
+						node.setCaptured(true);
+						while(itr.hasNext())
+							node.addNeighbor(hidden.getNode(Integer.parseInt(itr.next())));
+					}
 					break;
-				case 2:
-					budget -= Parameters.PROBE_SECURITY_RATE;
+				case 2: //probe security value
+					//budget -= Parameters.PROBE_SECURITY_RATE;
+					id = Integer.parseInt(itr.next());
+					node = hidden.getNode(id);
+					sv = Integer.parseInt(itr.next());
+					node.setSv(sv);
 					break;
-				case 3:
-					budget -= Parameters.PROBE_POINT_RATE;
+				case 3: //probe point value
+					//budget -= Parameters.PROBE_POINT_RATE;
+					id = Integer.parseInt(itr.next());
+					node = hidden.getNode(id);
+					pv = Integer.parseInt(itr.next());
+					node.setPv(pv);
 					break;
-				case 4:
-					budget -= Parameters.PROBE_CONNECTIONS_RATE;
+				case 4: //probe connections
+					//budget -= Parameters.PROBE_CONNECTIONS_RATE;
+					id = Integer.parseInt(itr.next());
+					node = hidden.getNode(id);
+					int connAmt = Integer.parseInt(itr.next());
+					node.setNeighborAmount(connAmt);
 					break;
-				case 5:
-					budget -= Parameters.PROBE_HONEY_RATE;
+				case 5: //probe honeypot
+					//budget -= Parameters.PROBE_HONEY_RATE;
+					id = Integer.parseInt(itr.next());
+					node = hidden.getNode(id);
+					hp = Integer.parseInt(itr.next());
+					node.setHoneyPot(hp);
+					break;
+				case 6: //public node
+					id = Integer.parseInt(itr.next());
+					node = hidden.getNode(id);
+					node.setCaptured(true);
+					node.setNeighborAmount(0);
+					while(itr.hasNext())
+						node.addNeighbor(hidden.getNode(Integer.parseInt(itr.next())));
 					break;
 				case -1: default:
+					//budget -= Parameters.INVALID_RATE;
+					break;
+				}
+			}
+			return hidden;
+		}
+		catch(NumberFormatException nfe){ nfe.printStackTrace(); }
+		catch (IOException e) { e.printStackTrace();}
+		return hidden;
+	}
+	
+	public static int parseAttackerBudget(String attackerName, String defenderName, String graphName){;
+		String historyFile = attackerName + "-" + defenderName + "-" + graphName + ".history";
+		int budget = Parameters.ATTACKER_BUDGET;
+		try
+		{
+			File csvTrainData = new File(historyFile);
+			CSVParser parser = CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
+			for (CSVRecord csvRecord : parser)
+			{
+				Iterator<String> itr = csvRecord.iterator();
+				int move = Integer.parseInt(itr.next());
+				
+				switch(move){
+				case 0: //attack
+					budget -= Parameters.ATTACK_RATE;
+					break;
+				case 1: //superattack
+					budget -= Parameters.SUPERATTACK_RATE;
+					break;
+				case 2: //probe security value
+					budget -= Parameters.PROBE_SECURITY_RATE;
+					break;
+				case 3: //probe point value
+					budget -= Parameters.PROBE_POINT_RATE;
+					break;
+				case 4: //probe connections
+					budget -= Parameters.PROBE_CONNECTIONS_RATE;
+					break;
+				case 5: //probe honeypot
+					budget -= Parameters.PROBE_HONEY_RATE;
+					break;
+				case -1: //public node
 					budget -= Parameters.INVALID_RATE;
+					break;
+				case 6: default:
 					break;
 				}
 			}
 			return budget;
 		}
-		catch(NumberFormatException nfe){
-			return Parameters.ATTACKER_BUDGET;
-		}
+		catch(NumberFormatException nfe){ nfe.printStackTrace(); }
 		catch (IOException e) { e.printStackTrace();}
-		return Parameters.ATTACKER_BUDGET;
+		return budget;
 	}
 }

@@ -17,7 +17,9 @@ public class Node
 	private int pv;
 	private int isHoneyPot; //-1 means honeypot is unknown, 0 means false, 1 means true
 	private boolean captured;
-	ArrayList<Node> neighbor = new ArrayList<Node>();
+	private int bestRoll = -1;
+	private int neighborAmount = -1;
+	public ArrayList<Node> neighbor = new ArrayList<Node>();
     
 	/**
      * Empty Constructor.
@@ -90,45 +92,6 @@ public class Node
 	}
 
 	/**
-     * Add Neighbor to the current node
-     * @param neighborNode neighbor node which will the added as a neighbor to the current node
-     */
-	public void addNeighbor(Node neighborNode)
-	{
-		this.neighbor.add(neighborNode);
-	}
-
-	/**
-     * Returns all the neighbor
-     * @return arraylist of all the neighbors
-     */
-	private ArrayList<Node> getNeighbors()
-	{
-		return this.neighbor;
-	}
-
-	/**
-     * Deletes neighbor from the current node
-     * @param id An integer indicates the nodeId to be removed
-     * @return boolean i.e. True/False is the delete operation successful or not
-     */
-	private boolean deleteNeighbor(int id)
-	{
-		if(this.neighbor.size() == 1)
-			return false;
-
-		for(Node d: this.neighbor)
-		{
-			if(d.nodeID == id && d.neighbor.size() > 1)
-			{
-				this.neighbor.remove(this.neighbor.indexOf(d));
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
      * Returns the nodeId
      * @return the nodeId
      */
@@ -159,6 +122,8 @@ public class Node
      */
 	public void setSv(int sv)
 	{
+		if(sv == 0)
+			captured = true;
 		this.sv = sv;
 	}
 
@@ -262,6 +227,50 @@ public class Node
 	 */
 	public void setCaptured(boolean captured){
 		this.captured = captured;
+	}
+	
+	public int getBestRoll(){
+		return bestRoll;
+	}
+	
+	public void setBestRoll(int bestRoll){
+		this.bestRoll = bestRoll;
+	}
+	
+	public int getNeighborAmount(){
+		return neighborAmount;
+	}
+	
+	public void setNeighborAmount(int amt){
+		neighborAmount = amt;
+	}
+	
+	/**
+     * Add Neighbor to the current node
+     * @param neighborNode neighbor node which will the added as a neighbor to the current node
+     */
+	public void addNeighbor(Node neighborNode)
+	{
+		neighborAmount++;
+		this.neighbor.add(neighborNode);
+	}
+
+	/**
+     * Returns the neighbor
+     * @return Node of idx
+     */
+	public Node getNeighbor(int idx)
+	{
+		return neighbor.get(idx);
+	}
+	
+	/**
+     * Returns the neighbor
+     * @return Node of idx
+     */
+	public ArrayList<Node> getNeighborList()
+	{
+		return neighbor;
 	}
 	
 	/**
