@@ -13,7 +13,7 @@ public abstract class Attacker implements Runnable
 {
     protected ArrayList<Node> visibleNodes;
     private AttackerHelper ah;
-    protected static String attackerName = "defaultAttacker"; //Overwrite this variable in your attacker subclass
+    private String attackerName = "defaultAttacker"; //Overwrite this variable in your attacker subclass
     private String graph;
     private Network netVisible;
     protected ArrayList<Node> capturedNodes;

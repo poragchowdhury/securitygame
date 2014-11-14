@@ -14,82 +14,54 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 1;
+        int numGames = 2;
         //generateGraphs(numGames);
 
+        //add Defenders here
         ArrayList<Defender> defenders = new ArrayList<Defender>();
-        for(int i = 0; i < numGames; i++)
-        {
-            //add defenders in this loop
-            defenders.add(new WhatDoesThisButtonDoDefender(Integer.toString(i)));
-        }
-        //execute defenders
-        for(int i = 0; i < defenders.size(); i++)
-        {
-            Defender d = defenders.get(i);
-            new Thread(d).start();
-            try{Thread.sleep(2000);}catch (Exception e){e.printStackTrace();}
-            d.kill();
-            new DefenderHelper(d.getName(), d.getGraph());
-        }
-
+        defenders.add(new WhatDoesThisButtonDoDefender("0"));
+        //add Attackers here
         ArrayList<Attacker> attackers = new ArrayList<Attacker>();
+        attackers.add(new Blitzkrieg("WhatDoesThisButtonDo","0"));
+
+        //get names of attackers and defenders
+        String[] defenderNames = new String[defenders.size()];
         for(int i = 0; i < defenders.size(); i++)
-        {
-            for(int j = 0; j < numGames; j++)
-            {
-                //add attackers in this loop
-                attackers.add(new Blitzkrieg(defenders.get(i).getName(),defenders.get(i).getGraph()));
-            }
-        }
-        //get names of attackers and defenders for future analysis
-        //and to find out how many attackers and defenders there are
-        Set<String> defenderSet = new HashSet<String>();
-        Set<String> attackerSet = new HashSet<String>();
-        for(int i = 0; i < defenders.size(); i++)
-            defenderSet.add(defenders.get(i).getName());
+            defenderNames[i] = defenders.get(i).getName();
+        String[] attackerNames = new String[attackers.size()];
         for(int i = 0; i < attackers.size(); i++)
-            attackerSet.add(attackers.get(i).getName());
-        int numDefenders = defenderSet.size();
-        int numAttackers = attackerSet.size();
+            attackerNames[i] = attackers.get(i).getName();
+
+        int numDefenders = defenderNames.length;
+        int numAttackers = attackerNames.length;
         int[][] points = new int[numDefenders][numAttackers];
 
-        //run attackers here
-        /*for(int i = 0; i < defenders.size(); i++)
-        {
-            String defenderName = defenders.get(i).getName();
-            String graphName = defenders.get(i).getGraph();
-            Attacker a = new Blitzkrieg(defenderName, graphName);
-            AttackerMonitor am = new AttackerMonitor(Blitzkrieg.getName(), defenderName, graphName);
-    	    while(am.getBudget() > 0)
-            {
-                a = new Blitzkrieg(defenderName, graphName);
-                new Thread(a).start();
-                try{Thread.sleep(500);}catch(Exception ex){ex.printStackTrace();}
-                a.kill();
-                am.readMove();
-                System.out.println("Budget after move: " + am.getBudget());
-                System.out.println();
-    	    }
-            //attackers.add(a);
-            am.close();
-        }*/
-
+        //execute defenders
         for(int d = 0; d < numDefenders; d++)
         {
+            for(int g = 0; g < numGames; g++)
+            {
+                Defender defender = getDefender(defenderNames[d],g+"");
+                new Thread(defender).start();
+                try{Thread.sleep(2000);}catch (Exception e){e.printStackTrace();}
+                defender.kill();
+                new DefenderHelper(defender.getName(), defender.getGraph());
+            }
+        }
+        //execute attackers
+        for(int d = 0; d < numDefenders; d++)
+        {
+            String defenderName = defenderNames[d];
             for(int a = 0; a < numAttackers; a++)
             {
+                String attackerName = attackerNames[a];
                 for(int g = 0; g < numGames; g++)
                 {
-                    int j = d*numDefenders+g;
-                    String defenderName = defenders.get(j).getName();
-                    String graphName = defenders.get(j).getGraph();
-                    int i = d *numAttackers*numDefenders + (a*numAttackers)+g;
-                    Attacker attacker = attackers.get(i);
-                    AttackerMonitor am = new AttackerMonitor(attacker.getName(), defenderName, graphName);
+                    String graphName=g+"";
+                    AttackerMonitor am = new AttackerMonitor(attackerName, defenderName, graphName);
                     while(am.getBudget() > 0)
                     {
-                        attacker = attackers.get(i);
+                        Attacker attacker = getAttacker(defenderName,attackerName,graphName);
                         new Thread(attacker).start();
                         try{Thread.sleep(500);}catch(Exception ex){ex.printStackTrace();}
                         attacker.kill();
@@ -98,14 +70,12 @@ public class GameMaster
                         System.out.println();
                     }
                     am.close();
-                    points[i][j]+=am.getPoints();
+                    points[d][a]+=am.getPoints();
                 }
             }
         }
         //perform analysis
-        Analyzer analyzer = new Analyzer(points,
-                                        attackerSet.toArray(new String[attackerSet.size()]),
-                                        defenderSet.toArray(new String[defenderSet.size()]));
+        Analyzer analyzer = new Analyzer(points,attackerNames,defenderNames);
     }
 
     public static void generateGraphs(int numGraphs)
@@ -116,4 +86,32 @@ public class GameMaster
             n.printNetwork();
         }
     }
+
+    public static Defender getDefender(String name, String file)
+    {
+        Defender d;
+        if(name.equalsIgnoreCase("WhatDoesThisButtonDo")){
+            return new WhatDoesThisButtonDoDefender(file);
+        }
+        return new Defender("","") {
+            @Override
+            public void makeMoves() {
+                System.out.print("check name");
+            }
+        };
+    }
+    public static Attacker getAttacker(String defName, String atName, String file)
+    {
+        Attacker a;
+        if(atName.equalsIgnoreCase("Blitzkrieg"))
+            return new Blitzkrieg(defName,file);
+        return new Attacker("","","") {
+            @Override
+            public void makeMove() {
+                System.out.println("check attacker name");
+            }
+        };
+
+    }
 }
+
