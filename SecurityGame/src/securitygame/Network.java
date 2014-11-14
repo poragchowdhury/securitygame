@@ -196,9 +196,11 @@ public class Network {
      */
 	public void printHiddenNetwork()
 	{
+		ArrayList<Node> captured = getCapturedNodes();
+		System.out.println("Captured: " + captured.size());
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter(name + "-hidden.graph", "UTF-8");
+			writer = new PrintWriter(fullGraphName + "-hidden.graph", "UTF-8");
 			for (int i = 0; i < nodes.length; i++)
 			{
 				Node node = getNode(i);
@@ -225,7 +227,7 @@ public class Network {
 			for (int i = 0; i < nodes.length; i++){
 				Node node = getNode(i);
 				if(node.isCaptured() == true)
-					writer.println(node.getPv()+","+node.getSv()+","+node.isHoneyPot());
+					writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
 				else
 					writer.println("-1,-1,-1");
 			}
@@ -366,7 +368,7 @@ public class Network {
 			{
 				Node node = getNode(i);
 				//writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
-                writer.println(node.getPv()+","+node.getSv()+",-1");
+                writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
 			}
 			writer.close();
 		}
@@ -578,12 +580,14 @@ public class Network {
 		{
 			Node tempNode = getNode(i);
 			tempNode.setNodeID(i);
-			tempNode.setHoneyPot(false);
+			tempNode.setHoneyPot(0);
 			
 			if(tmpPublicNodes.contains(i))
 			{
 				tempNode.setPv(0);
 				tempNode.setSv(0);
+				tempNode.setHoneyPot(0);
+				tempNode.setCaptured(true);
 			}
 			else if(tmpRouterNodes.contains(i))
 			{
@@ -591,6 +595,7 @@ public class Network {
 				//System.out.println("Router node : " + i);
 				addMoreEdges(i, adjacencyMatrix);
 				tempNode.setPv(0);
+				tempNode.setHoneyPot(0);
 				int nodeMinSecurityValue= r.nextInt(Parameters.MAX_POINT_VALUE - 1) + 1;
 				tempNode.setSv(nodeMinSecurityValue);
 			}
@@ -599,6 +604,7 @@ public class Network {
 				int nodePointValue= r.nextInt(Parameters.MAX_POINT_VALUE - 1) + 1;
 				System.out.println("Setting point value " + nodePointValue + "for node id " + i);
 				tempNode.setPv(nodePointValue);
+				tempNode.setHoneyPot(0);
 				int randSecurity= r.nextInt(5 - 1) + 1;
 				int maxSecurityValue = nodePointValue + randSecurity;
 				if (maxSecurityValue > Parameters.MAX_POINT_VALUE)
@@ -696,8 +702,8 @@ public class Network {
 	public ArrayList<Node> getAvailableNodes(){
 		ArrayList<Node> availableNodes = new ArrayList<Node>();
 		for(int i = 0; i < nodes.length; i++){
-			for(int j = 0; j < nodes[i].neighbor.size(); j++){
-				Node neighbor = nodes[i].neighbor.get(j);
+			for(int j = 0; nodes[i].isCaptured() && j < nodes[i].getNeighborAmount(); j++){
+				Node neighbor = nodes[i].getNeighbor(j);
 				if(!neighbor.isCaptured() && !availableNodes.contains(neighbor))
 					availableNodes.add(neighbor);
 			}

@@ -4,8 +4,10 @@ import java.util.Random;
 
 public class Blitzkrieg extends Attacker {
 
-	public Blitzkrieg(String graphFile) {
-		super("Blitzkrieg", graphFile);
+	public static final String attackerName = "Blitzkrieg";
+	
+	public Blitzkrieg(String defenderName, String graphFile) {
+		super(attackerName, defenderName, graphFile);
 	}
 
 	@Override
@@ -25,6 +27,10 @@ public class Blitzkrieg extends Attacker {
 			probeConnections(nodeID);
 		else if(move == 5)
 			probeHoneypot(nodeID);
+	}
+	
+	public static String getName(){
+		return attackerName;
 	}
 
 }

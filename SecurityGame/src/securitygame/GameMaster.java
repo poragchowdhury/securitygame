@@ -14,12 +14,17 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 5;
+        int numGames = 3;
         //generateGraphs(numGames);
 
         ArrayList<Defender> defenders = new ArrayList<Defender>();
+        int numDefenders = 0;
+        int numAttackers = 0;
         for(int i = 0; i < numGames; i++)
-            defenders.add(new WhatDoesThisButtonDoDefender(i+""));
+        {
+            defenders.add(new WhatDoesThisButtonDoDefender(Integer.toString(i)));
+        }
+
         for(int i = 0; i < defenders.size(); i++)
         {
             Defender d = defenders.get(i);
@@ -31,31 +36,29 @@ public class GameMaster
 
         ArrayList<Attacker> attackers = new ArrayList<Attacker>();
         for(int i = 0; i < defenders.size(); i++)
-        {
-            AttackerHelper ah;
-            String defName = defenders.get(i).getName();
-            //String name = defenders.get(i).getGraph()+"-hidden";
-            String name = defenders.get(i).getGraph();
-            Network net = Parser.parseGraph(defName+"-"+name+".graph");
-            Attacker a = new Blitzkrieg(defName+"-"+name);
-            resetAttackerBudget(a.getName(), defName + "-" + name);
-            int budget = Parameters.ATTACKER_BUDGET;
-    	    while(budget > 0)
+            for(int j = 0; j < numGames; j++)
             {
-                a = new Blitzkrieg(defName+"-"+name);
+                attackers.add(new Blitzkrieg(defenders.get(i).getName(),defenders.get(i).getGraph()));
+            }
+        for(int i = 0; i < defenders.size(); i++)
+        {
+            String defenderName = defenders.get(i).getName();
+            String graphName = defenders.get(i).getGraph();
+            Attacker a = new Blitzkrieg(defenderName, graphName);
+            AttackerMonitor am = new AttackerMonitor(Blitzkrieg.getName(), defenderName, graphName);
+
+    	    while(am.getBudget() > 0)
+            {
+                a = new Blitzkrieg(defenderName, graphName);
                 new Thread(a).start();
-                try{Thread.sleep(2000);}catch(Exception ex){ex.printStackTrace();}
+                try{Thread.sleep(500);}catch(Exception ex){ex.printStackTrace();}
                 a.kill();
-                ah = new AttackerHelper(a.getName(), defName+"-"+name);
-                budget = ah.getBudget();
-                System.out.println("Budget after move: " + budget);
+                am.readMove();
+                System.out.println("Budget after move: " + am.getBudget());
                 System.out.println();
     	    }
-            /*new Thread(a).start();
-            try{Thread.sleep(2000);}catch(Exception ex){ex.printStackTrace();}
-            a.kill();
-            ah = new AttackerHelper(a.getName(), defName+"-"+name);*/
             //attackers.add(a);
+            am.close();
         }
 
     }
