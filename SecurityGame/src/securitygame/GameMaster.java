@@ -1,8 +1,6 @@
 package securitygame;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Pits Attacker and Defender agents against one another in the name of Science!
@@ -14,7 +12,7 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 2;
+        int numGames = 5;
         //generateGraphs(numGames);
 
         //add Defenders here
@@ -24,18 +22,11 @@ public class GameMaster
         ArrayList<Attacker> attackers = new ArrayList<Attacker>();
         attackers.add(new Blitzkrieg("WhatDoesThisButtonDo","0"));
 
-        //get names of attackers and defenders
+        //get names of defenders
         String[] defenderNames = new String[defenders.size()];
         for(int i = 0; i < defenders.size(); i++)
             defenderNames[i] = defenders.get(i).getName();
-        String[] attackerNames = new String[attackers.size()];
-        for(int i = 0; i < attackers.size(); i++)
-            attackerNames[i] = attackers.get(i).getName();
-
         int numDefenders = defenderNames.length;
-        int numAttackers = attackerNames.length;
-        int[][] points = new int[numDefenders][numAttackers];
-
         //execute defenders
         for(int d = 0; d < numDefenders; d++)
         {
@@ -48,6 +39,15 @@ public class GameMaster
                 new DefenderHelper(defender.getName(), defender.getGraph());
             }
         }
+
+        //get names of attackers
+        String[] attackerNames = new String[attackers.size()];
+        for(int i = 0; i < attackers.size(); i++)
+            attackerNames[i] = attackers.get(i).getName();
+        int numAttackers = attackerNames.length;
+        //initialize point matrix
+        int[][] points = new int[numDefenders][numAttackers];
+
         //execute attackers
         for(int d = 0; d < numDefenders; d++)
         {
