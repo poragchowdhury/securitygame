@@ -11,7 +11,6 @@ import java.util.ArrayList;
  */
 public abstract class Attacker implements Runnable
 {
-    protected ArrayList<Node> visibleNodes;
     private AttackerHelper ah;
     private String attackerName = "defaultAttacker"; //Overwrite this variable in your attacker subclass
     private String graph;
@@ -37,14 +36,21 @@ public abstract class Attacker implements Runnable
         availableNodes = netVisible.getAvailableNodes();
         budget = Parser.parseAttackerBudget(attackerName, defenderName, graphName);
         ah = new AttackerHelper(netVisible, budget, agentName, defenderName, graphName);
+        initialize();
     }
+    
+    public Attacker(String attackerName){
+    	this.attackerName = attackerName;
+    }
+    
+    protected abstract void initialize();
 
     /**
      * Attacker selects to perform a regular attack on a node.
      *
      * @param id Node's ID number
      */
-    protected final void attack(int id)
+    private final void attack(int id)
     {
         ah.attack(id);
     }
@@ -54,7 +60,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    protected final void superAttack(int id)
+    private final void superAttack(int id)
     {
         ah.superAttack(id);
     }
@@ -64,7 +70,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    protected final void probeSecurity(int id)
+    private final void probeSecurity(int id)
     {
         ah.probeSecurity(id);
     }
@@ -74,7 +80,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    protected void probePoints(int id)
+    private void probePoints(int id)
     {
         ah.probePoint(id);
     }
@@ -84,7 +90,7 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    protected final void probeConnections(int id)
+    private final void probeConnections(int id)
     {
         ah.probeConnections(id);
     }
@@ -94,13 +100,21 @@ public abstract class Attacker implements Runnable
      *
      * @param id Node's ID number
      */
-    protected final void probeHoneypot(int id)
+    private final void probeHoneypot(int id)
     {
         ah.probeHoney(id);
     }
+    
+    /**
+     * Attacker performs an invalid move
+     */
+    private final void invalid()
+    {
+        ah.invalid();
+    }
 
     /**
-     * Add your decision logic here in your subclass
+     * Executes one action for the attacker
      */
     public final void run()
     {
@@ -130,13 +144,39 @@ public abstract class Attacker implements Runnable
     		} else {
     			System.out.println(-1);
     		}
-            makeMove();
+    		
+    		AttackerAction attack = makeSingleAction();
+    		AttackerActionType type = attack.move;
+            switch(type){
+            case ATTACK:
+            	attack(attack.nodeID);
+            	break;
+            case SUPERATTACK:
+            	superAttack(attack.nodeID);
+            	break;
+            case PROBE_SECURITY:
+            	probeSecurity(attack.nodeID);
+            	break;
+            case PROBE_POINTS:
+            	probePoints(attack.nodeID);
+            	break;
+            case PROBE_CONNECTIONS:
+            	probeConnections(attack.nodeID);
+            	break;
+            case PROBE_HONEYPOT:
+            	probeHoneypot(attack.nodeID);
+            	break;
+            case INVALID:
+            	invalid();
+            	break;
+            }
+            
             isAlive = false;
         }
         ah.close();
     }
     
-    public abstract void makeMove();
+    public abstract AttackerAction makeSingleAction();
 
     /**
      * Get Agent Name used by GameMaster.

@@ -11,13 +11,25 @@ import org.apache.commons.csv.CSVRecord;
 
 public class Parser
 {
+	
+	/**
+	 * Given a .graph file, a network is generated following a predetermined format
+	 * 
+	 * @param filename
+	 * @return a Network object based on the .graph file given
+	 */
 	public static Network parseGraph(String filename)
 	{
-		File csvTrainData = new File(filename);
+		boolean deleteJunkFile = false;
 		try 
 		{
-			CSVParser parser = CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
-			CSVParser parseRecords= CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
+			File gFile = new File(filename);
+			if(!gFile.exists()){
+				gFile.createNewFile();
+				deleteJunkFile = true;
+			}
+			CSVParser parser = CSVParser.parse(gFile, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
+			CSVParser parseRecords= CSVParser.parse(gFile, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
 			int neighborsCounter = 0;
 			int numNodes = parseRecords.getRecords().size()/2;
             Network network = new Network(0,numNodes);
@@ -60,6 +72,8 @@ public class Parser
 					neighborsCounter++;
 				}
 			}
+			if(deleteJunkFile)
+				gFile.delete();
 			return network;
 		}
 		catch (IOException e) 
@@ -70,7 +84,6 @@ public class Parser
 	}
     /**
 	 * Parses attacker's .history file and calculates and returns the attacker's network
-	 * @author Marcus Gutierrez
 	 * @param attackerName
 	 * @param defenderName
 	 * @param graphName
@@ -83,6 +96,12 @@ public class Parser
 		File csvTrainData = new File(historyFile);
 		try
 		{
+			boolean deleteJunkFile = false;
+			File hFile = new File(historyFile);
+			if(!hFile.exists()){
+				hFile.createNewFile();
+				deleteJunkFile = true;
+			}
 			CSVParser parser = CSVParser.parse(csvTrainData, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
 			for (CSVRecord csvRecord : parser)
 			{
@@ -180,13 +199,24 @@ public class Parser
 					break;
 				}
 			}
+			if(deleteJunkFile)
+				hFile.delete();
 			return hidden;
 		}
 		catch(NumberFormatException nfe){ nfe.printStackTrace(); }
 		catch (IOException e) { e.printStackTrace();}
+		catch (Exception e) { e.printStackTrace(); }
 		return hidden;
 	}
 	
+	/**
+	 * Parses attacker's .history file and calculates and returns the attacker's budget
+	 * 
+	 * @param attackerName
+	 * @param defenderName
+	 * @param graphName
+	 * @return budget i.e. integer value
+	 */
 	public static int parseAttackerBudget(String attackerName, String defenderName, String graphName){;
 		String historyFile = attackerName + "-" + defenderName + "-" + graphName + ".history";
 		int budget = Parameters.ATTACKER_BUDGET;

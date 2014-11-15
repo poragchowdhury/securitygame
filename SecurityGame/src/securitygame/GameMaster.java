@@ -12,15 +12,13 @@ public class GameMaster
 {
     public static void main(String[] args)
     {
-        int numGames = 5;
-        //generateGraphs(numGames);
+        int numGames = 1;
+        generateGraphs(numGames);
 
         //add Defenders here
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         defenders.add(new WhatDoesThisButtonDoDefender("0"));
-        //add Attackers here
-        ArrayList<Attacker> attackers = new ArrayList<Attacker>();
-        attackers.add(new Blitzkrieg("WhatDoesThisButtonDo","0"));
+        defenders.add(new WhatDoesThisButtonDoDefenderV2("0"));
 
         //get names of defenders
         String[] defenderNames = new String[defenders.size()];
@@ -40,6 +38,11 @@ public class GameMaster
             }
         }
 
+        //add Attackers here
+        ArrayList<Attacker> attackers = new ArrayList<Attacker>();
+        attackers.add(new Blitzkrieg());
+        attackers.add(new BlitzkriegV2());
+        
         //get names of attackers
         String[] attackerNames = new String[attackers.size()];
         for(int i = 0; i < attackers.size(); i++)
@@ -93,6 +96,9 @@ public class GameMaster
         if(name.equalsIgnoreCase("WhatDoesThisButtonDo")){
             return new WhatDoesThisButtonDoDefender(file);
         }
+        if(name.equalsIgnoreCase("WhatDoesThisButtonDoV2")){
+            return new WhatDoesThisButtonDoDefenderV2(file);
+        }
         return new Defender("","") {
             @Override
             public void makeMoves() {
@@ -105,11 +111,17 @@ public class GameMaster
         Attacker a;
         if(atName.equalsIgnoreCase("Blitzkrieg"))
             return new Blitzkrieg(defName,file);
-        return new Attacker("","","") {
-            @Override
-            public void makeMove() {
-                System.out.println("check attacker name");
-            }
+        if(atName.equalsIgnoreCase("BlitzkriegV2"))
+            return new BlitzkriegV2(defName,file);
+        return new Attacker("","",""){
+
+			@Override
+			public AttackerAction makeSingleAction() {
+				System.out.println("check attacker name");
+				return null;
+			}
+			@Override
+			protected void initialize() {}
         };
 
     }

@@ -34,16 +34,14 @@ public class Parameters {
 
     /**The value that the attacker gets for each node in a graph*/
     public static final int ATTACKER_RATE = 10;
-    /**Attacker's Budget*/
-    public static final int ATTACKER_BUDGET = ATTACKER_RATE * NUMBER_OF_NODES;
     /**The maximum value for an attacker roll*/
     public static final int ATTACK_ROLL = 20;
     /**The cost for performing an attack*/
-    public static final int ATTACK_RATE = 5;
+    public static final int ATTACK_RATE = 8;
     /**The maximum value for a super attack*/
     public static final int SUPERATTACK_ROLL = 30;
     /**The cost for performing a super attack*/
-    public static final int SUPERATTACK_RATE = 7;
+    public static final int SUPERATTACK_RATE = 10;
     /**The cost to probe for the security value*/
     public static final int PROBE_SECURITY_RATE = 2;
     /**The cost to probe for the point value*/
@@ -52,4 +50,6 @@ public class Parameters {
     public static final int PROBE_CONNECTIONS_RATE = 1;
     /**The cost to identify if a node is a honeypot*/
     public static final int PROBE_HONEY_RATE = 1;
+    /**Attacker's Budget*/
+    public static final int ATTACKER_BUDGET = ATTACK_RATE * NUMBER_OF_NODES;
 }

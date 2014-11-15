@@ -4,10 +4,19 @@ import java.util.ArrayList;
 
 /**
  * Node class is used for creating nodes for the network.
- * Network class will use this class to generate nodes. 
+ * Important variables information for Attacker agents:
+ * 
+ * nodeId - integer representing the node
+ * sv - security value of a node (-1 means unknown)
+ * pv - point value of a node (-1 means unknown)
+ * isHoneyPot - boolean for if the node is a honeypot (-1 means unknown, 0 means false, 1 means true)
+ * captured - if the node is a public entry node or has been successfully captured via attack
+ * bestRoll - the highest roll on this node (if -1, the node has never been attacked), if the security value is -1, bestRoll may be used to reason what the sv might be (actual security value >= bestRoll if sv == -1)
+ * neighborAmount - number of connections this node has. Will be different than neighbor.size() if the node has not been captured. (-1 means unknown)
+ * neighbor - list of neighbors to this node. Will be empty if the node has not been captured
  *
- * @author      Porag Chowdhury, Anjon Basak
- * @version     2014/11/12
+ * @author      Porag Chowdhury, Anjon Basak, Marcus Gutierrez
+ * @version     11/14/2014
  */
 
 public class Node 
@@ -148,7 +157,6 @@ public class Node
 	 * Sends the known honeypot status of this node. If the honeypot status is unknown (-1),
 	 * false will be returned. knowsHoneyPot() should be used in conjunction with this
 	 * method or use getHoneyPot() to find the specific status of a honeypot.
-	 * @Marcus Gutierrez
 	 * @return if the node is a known honey pot, returns false if -1
 	 */
 	public boolean isHoneyPot()
@@ -163,7 +171,6 @@ public class Node
 	 * -1 -> true honeypot status is unknown
 	 * 0 -> this node is not a honeypot
 	 * 1 -> this node is a honeypot
-	 * @author Marcus Gutierrez
 	 * @return honeypot's status
 	 */
 	public int getHoneyPot(){
@@ -176,7 +183,6 @@ public class Node
 	 * values represent node status with certainty.
 	 * If isHoneyPot is -1, this method returns false, because the true
 	 * honeypot status of this node is unknown.
-	 * @author Marcus Gutierrez
 	 * @return the visibility of the honeypot status of this node
 	 */
 	public boolean knowsHoneyPot(){
@@ -187,7 +193,6 @@ public class Node
 
 	/**
 	 * Sets the honeypot status of this node
-	 * @author Marcus Gutierrez
 	 * @param honeyPot sets the isHoneyPot to a known value (not -1)
 	 */
 	public void setHoneyPot(boolean honeyPot)
@@ -203,7 +208,6 @@ public class Node
 	 * -1 -> true honeypot status is unknown
 	 * 0 -> this node is not a honeypot
 	 * 1 -> this node is a honeypot
-	 * @author Marcus Gutierrez
 	 * @param honeyPot sets the isHoneyPot field variable
 	 */
 	public void setHoneyPot(int honeyPot)
@@ -213,7 +217,6 @@ public class Node
 	
 	/**
 	 * Returns captured
-	 * @author Marcus Gutierrez
 	 * @return captured
 	 */
 	public boolean isCaptured(){
@@ -222,25 +225,38 @@ public class Node
 	
 	/**
 	 * sets this.captured attribute
-	 * @author Marcus Gutierrez
 	 * @param captured value to set this.captured to
 	 */
 	public void setCaptured(boolean captured){
 		this.captured = captured;
 	}
 	
+	/**
+	 * Returns bestRoll
+	 */
 	public int getBestRoll(){
 		return bestRoll;
 	}
 	
+	/**
+	 * sets this.bestRoll attribute
+	 * @param bestRoll new best roll
+	 */
 	public void setBestRoll(int bestRoll){
 		this.bestRoll = bestRoll;
 	}
 	
+	/**
+	 * Returns neighborAmount
+	 */
 	public int getNeighborAmount(){
 		return neighborAmount;
 	}
 	
+	/**
+	 * sets this.neighborAmount attribute
+	 * @param amt new neighbor amount
+	 */
 	public void setNeighborAmount(int amt){
 		neighborAmount = amt;
 	}

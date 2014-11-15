@@ -14,21 +14,20 @@ import java.util.Random;
  * protected int budget - the current budget of the Attacker. Be careful that your next move will not cost more than your budget.
  * 
  * @author Marcus Gutierrez
- * @version 11/14/2014
+ * @version 14/14/2014
  */
-public class Blitzkrieg extends Attacker {
-	
-	/**INSERT YOUR ATTACKER NAME HERE*/
-	private final static String attackerName = "Blitzkrieg";
-	
-    /**DO NOT CHANGE THIS CONSTRUCTOR*/
-	public Blitzkrieg(String defenderName, String graphFile) {
-		super(attackerName, defenderName, graphFile);
+public class BlitzkriegV2 extends Attacker {
+    /**
+     * Constructor
+     * @param defenderName defender's name
+     * @param graphFile graph to read
+     */
+	public BlitzkriegV2(String defenderName, String graphFile) {
+		super("BlitzkriegV2", defenderName, graphFile);
 	}
 	
-	/**DO NOT CHANGE THIS CONSTRUCTOR*/
-	public Blitzkrieg(){
-		super("Blitzkrieg");
+	public BlitzkriegV2(){
+		super("BlitzkriegV2");
 	}
 	
 	/**
@@ -37,8 +36,8 @@ public class Blitzkrieg extends Attacker {
 	protected void initialize(){
 		
 	}
-	
-    /**
+
+	/**
      * Example Logic of Attacker agent.
      * You will need to return an AttackerAction which requires the AttackerActionType
      * and the nodeID of the action.
@@ -52,22 +51,7 @@ public class Blitzkrieg extends Attacker {
 	public AttackerAction makeSingleAction() {
 		Random r = new Random();
 		int nodeID = availableNodes.get(r.nextInt(availableNodes.size())).getNodeID();
-		int move = r.nextInt(6);
-		AttackerActionType type;
-		if(move == 0)
-			type = AttackerActionType.ATTACK;
-		else if(move == 1)
-			type = AttackerActionType.SUPERATTACK;
-		else if(move == 2)
-			type = AttackerActionType.PROBE_SECURITY;
-		else if(move == 3)
-			type = AttackerActionType.PROBE_POINTS;
-		else if(move == 4)
-			type = AttackerActionType.PROBE_CONNECTIONS;
-		else if(move == 5)
-			type = AttackerActionType.PROBE_HONEYPOT;
-		else
-			type = AttackerActionType.INVALID;
-		return new AttackerAction(type, nodeID);
+		return new AttackerAction(AttackerActionType.ATTACK, nodeID);
+		
 	}
 }

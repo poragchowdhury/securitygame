@@ -22,7 +22,7 @@ import java.util.Random;
  * Actions deemed invalid will be charged the Parameters.INVALID_RATE value.
  *
  * @author      Marcus Gutierrez
- * @version     Nov 7, 2014
+ * @version		2014/11/14
  */
 
 public class AttackerMonitor
@@ -39,39 +39,6 @@ public class AttackerMonitor
     private int points;
     private Random r;
     private ArrayList<Node> availableNodes;
-
-    /*public AttackerMonitor(String attackerName, String defenderName, String graphName){
-        points = 0;
-    	budget = Parameters.ATTACKER_BUDGET;
-    	System.out.println("Initial Budget1: " + budget);
-    	r = new Random();
-    	this.attackerName = attackerName;
-    	this.defenderName = defenderName;
-    	this.graphName = graphName;
-    	try {
-    		net = Parser.parseGraph(defenderName + "-" + graphName + ".graph");
-    		visibleNet = Parser.parseGraph(defenderName + "-" + graphName + "-hidden.graph");
-    		availableNodes = visibleNet.getAvailableNodes();
-    		
-    		//clears history and adds the public nodes to the history
-			history = new PrintWriter(new FileWriter(attackerName + "-" + defenderName + "-" + graphName + ".history", false));
-			ArrayList<Node> publicNodes = visibleNet.getCapturedNodes();
-			for(int i = 0; i < publicNodes.size(); i++){
-				ArrayList<Node> neighbors = publicNodes.get(i).getNeighborList();
-				history.print("6,");
-				history.print(publicNodes.get(i).getNodeID()+",");
-				for(int j = 0; j < neighbors.size(); j++){
-					if(j == neighbors.size() - 1)
-						history.print(neighbors.get(j).getNodeID());
-					else
-						history.print(neighbors.get(j).getNodeID() + ",");
-				}
-				history.println();
-				history.close();
-			}
-		} catch (IOException e) {e.printStackTrace();}
-    	history.close();
-    }*/
 
     public AttackerMonitor(String attackerName, String defenderName, String graphName){
         budget = Parameters.ATTACKER_BUDGET;
@@ -105,10 +72,11 @@ public class AttackerMonitor
     
     public void readMove(){
 		try{
+			visibleNet = Parser.parseAttackerHistory(attackerName, defenderName, graphName);
 			history = new PrintWriter(new FileWriter(attackerName + "-" + defenderName + "-" + graphName + ".history", true));
-			
 			File csv = new File(attackerName + "-" + defenderName + "-" + graphName + ".attack");
 			CSVParser parser = CSVParser.parse(csv, StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
+			
 			for(CSVRecord csvRecord : parser){
 				Iterator<String> itr = csvRecord.iterator();
                 int mode = Integer.parseInt(itr.next());
@@ -141,7 +109,7 @@ public class AttackerMonitor
                         }
                     }
                     else{
-                    	System.out.println("Invalid attack on node "+ id + "!");
+                    	System.out.println("Invalid attack on node "+ id + "! " + isAvailableNode(id));
                     	history.println("-1");
                         budget -= Parameters.INVALID_RATE;
                     }
@@ -173,7 +141,7 @@ public class AttackerMonitor
                             }
                         }
                         else{
-                        	System.out.println("Invalid superattack on node "+ id + "!");
+                        	System.out.println("Invalid superattack on node "+ id + "! " + isAvailableNode(id));
                         	history.println("-1");
                             budget -= Parameters.INVALID_RATE;
                         }
@@ -191,7 +159,7 @@ public class AttackerMonitor
                             history.println("2," + id + "," + sv);
                         }
                         else{
-                        	System.out.println("Invalid probing of security value on node "+ id + "!");
+                        	System.out.println("Invalid probing of security value on node "+ id + "! " + isAvailableNode(id));
                         	history.println("-1");
                             budget -= Parameters.INVALID_RATE;
                         }
@@ -209,7 +177,7 @@ public class AttackerMonitor
                             history.println("3," + id + "," + pv);
                         }
                         else{
-                        	System.out.println("Invalid probing of point value on node "+ id + "!");
+                        	System.out.println("Invalid probing of point value on node "+ id + "! " + isAvailableNode(id));
                         	history.println("-1");
                             budget -= Parameters.INVALID_RATE;
                         }
@@ -230,7 +198,7 @@ public class AttackerMonitor
                             history.println("4," + id + "," + n.neighbor.size());
                         }
                         else{
-                        	System.out.println("Invalid probing of connections on node "+ id + "!");
+                        	System.out.println("Invalid probing of connections on node "+ id + "! " + isAvailableNode(id));
                         	history.println("-1");
                             budget -= Parameters.INVALID_RATE;
                         }
@@ -247,7 +215,7 @@ public class AttackerMonitor
                             history.println("5," + id + "," + n.getHoneyPot());
                         }
                         else{
-                        	System.out.println("Invalid probing of honey pot on node "+ id + "!");
+                        	System.out.println("Invalid probing of honey pot on node "+ id + "! " + isAvailableNode(id));
                         	history.println("-1");
                             budget -= Parameters.INVALID_RATE;
                         }
@@ -285,43 +253,37 @@ public class AttackerMonitor
     }
 
     public boolean isValidAttack(int id){
-    	Node n = net.getNode(id);
-        if(budget < Parameters.ATTACK_RATE || n == null)
+        if(budget < Parameters.ATTACK_RATE)
             return false;
         return true;
     }
     
     public boolean isValidSuperAttack(int id){
-    	Node n = net.getNode(id);
-        if(budget < Parameters.SUPERATTACK_RATE || n == null)
+        if(budget < Parameters.SUPERATTACK_RATE)
             return false;
         return true;
     }
     
     public boolean isValidProbeSV(int id){
-    	Node n = net.getNode(id);
-        if(budget < Parameters.PROBE_SECURITY_RATE || n == null)
+        if(budget < Parameters.PROBE_SECURITY_RATE)
             return false;
         return true;
     }
     
     public boolean isValidProbePV(int id){
-    	Node n = net.getNode(id);
-        if(budget < Parameters.PROBE_POINT_RATE || n == null)
+        if(budget < Parameters.PROBE_POINT_RATE)
             return false;
         return true;
     }
     
     public boolean isValidProbeConn(int id){
-    	Node n = net.getNode(id);
-        if(budget < Parameters.PROBE_CONNECTIONS_RATE || n == null)
+        if(budget < Parameters.PROBE_CONNECTIONS_RATE)
             return false;
         return true;
     }
     
     public boolean isValidProbeHP(int id){
-    	Node n = net.getNode(id);
-        if(budget < Parameters.PROBE_HONEY_RATE || n == null)
+        if(budget < Parameters.PROBE_HONEY_RATE)
             return false;
         return true;
     }

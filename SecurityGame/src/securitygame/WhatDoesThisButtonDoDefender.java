@@ -14,7 +14,7 @@ public class WhatDoesThisButtonDoDefender extends Defender
     }
 
     /**
-     * Defender's logic goes here. Remember to close the defence file when done by calling dh.close()
+     * Defender's logic goes here.
      */
     public void makeMoves()
     {
@@ -63,6 +63,5 @@ public class WhatDoesThisButtonDoDefender extends Defender
                 honeypot(sv,pv,list);
             }
         }
-        dh.close();
     }
 }

@@ -1,23 +1,10 @@
 package securitygame;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Random;
 
 /**
- * Auxiliary class for creating and parsing .attack files.
+ * Auxiliary class for creating .attack files.
  * Attacker will use the three parameter constructor and combination of the two attack methods and the four probe methods
  * to generate an .attack file. Have Attacker remember to call close() when finished for safety.
  * Game Master will use the two parameter constructor for parsing original network and attacker file to generate the attacker's visible network and history.

@@ -2,15 +2,9 @@ package securitygame;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-//import java.io.UnsupportedEncodingException;
-//import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-//import java.util.Iterator;
 import java.util.Random;
-/*import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;*/
 /**
  * Network class is use for generating a network.
  * Game master will use this class to generate a network. 
@@ -30,7 +24,6 @@ public class Network {
 	 * Constructor used by Game master to initialize network.
 	 * @param networkName An integer indicates network name
 	 */
-
 	public Network(int networkName)
 	{
 		name = networkName;
@@ -68,7 +61,7 @@ public class Network {
 	}
 
 	/**
-     * Sets netwrok full name.
+     * Sets network full name.
      * @param name network name
      */
 	public void setName(String name) {
@@ -245,93 +238,6 @@ public class Network {
 
 	/**
      * Print network in a file
-     * @param attackerName name of the attacker
-     */
-	/*public void printHiddenNetwork(String attackerName)
-	{
-		PrintWriter writer;
-		try {
-			//writer = new PrintWriter(attackerName + "-" + name + ".visible", "UTF-8");
-            writer = new PrintWriter(attackerName + "-" + fullGraphName + ".visible", "UTF-8");
-			for (int i = 0; i < nodes.length; i++)
-			{
-				//Node node = getNode(i);
-				writer.println("-1");
-				
-			}
-			for (int i = 0; i < nodes.length; i++)
-			{
-				writer.println("-1,-1,-1");
-			}
-			writer.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch ( Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-*/
-/**
-	 * @author Marcus Gutierrez
-	 * @param attackerName Used to print hidden .visible graphs
-     * Print hidden network in a file.  private or unexplored nodes' rows will have -1.
-     */
-	public void printHiddenNetwork(String attackerName)
-	{
-		PrintWriter writer;
-		try {
-			writer = new PrintWriter(attackerName + "-" + fullGraphName + ".visible", "UTF-8");
-			for (int i = 0; i < nodes.length; i++)
-			{
-				Node node = getNode(i);
-				if (node.isCaptured()){
-					int neighborSize = node.neighbor.size();
-
-					int neighborCounter = 0;
-					for(Node neighbor: node.neighbor)
-					{
-						if(neighbor.getNodeID()!=node.getNodeID())
-						{
-							if(neighborCounter==neighborSize-1)
-								writer.print(neighbor.getNodeID());
-							else
-								writer.print(neighbor.getNodeID()+",");
-						}
-						neighborCounter++;
-					}
-					writer.println();
-				}
-				else
-					writer.println("-1");
-
-			}
-			for (int i = 0; i < nodes.length; i++)
-			{
-				Node node = nodes[i];
-				if(nodes[i].isCaptured())
-					writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
-				else
-					writer.println("-1,-1,-1");
-			}
-			writer.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch ( Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-
-	/**
-     * Print network in a file
      */
 	public void printNetwork()
 	{
@@ -380,72 +286,6 @@ public class Network {
 		{
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-     * Print visible network in a file
-     */
-	public void printVisibleNetwork()
-	{
-		PrintWriter writer;
-		try {
-			writer = new PrintWriter(fullGraphName + ".visible", "UTF-8");
-			for (int i = 0; i < nodes.length; i++){
-				Node node = getNode(i);
-				
-				if (node.neighbor.size() == 0)
-					writer.print("-1");
-				else{
-					int j;
-					for(j = 0; j < node.neighbor.size() - 1; j++){
-						Node neighbor = node.neighbor.get(j);
-						writer.print(neighbor.getNodeID() + ",");
-					}
-					writer.print(node.neighbor.get(j).getNodeID());
-				}
-				writer.println();
-			}
-			for (int i = 0; i < nodes.length; i++){
-				Node node = getNode(i);
-				writer.println(node.getPv()+","+node.getSv()+","+node.getHoneyPot());
-			}
-			writer.close();
-		} catch(Exception e) { e.printStackTrace(); }
-	}
-
-
-	/**
-     * Returns all the values in a string
-     * @return all the values in a string
-     */
-	public String toString()
-	{
-		String s = "";
-		for (int i = 0; i < nodes.length; i++)
-		{
-			Node node = getNode(i);
-			int neighborSize = node.neighbor.size();
-			int neighborCounter = 0;
-			for(Node neighbor: node.neighbor)
-			{
-				if(neighbor.getNodeID()!=node.getNodeID())
-				{
-					if(neighborCounter==neighborSize-1)
-						s+=neighbor.getNodeID();
-					else
-						s+=neighbor.getNodeID()+",";
-				}
-				neighborCounter++;
-			}
-			s+="\n";
-		}
-		for (int i = 0; i < nodes.length; i++)
-		{
-			Node node = getNode(i);
-			//s+=node.getPv()+","+node.getSv()+","+node.isPublic()+"\n";
-            s+=node.getPv()+","+node.getSv()+","+node.getHoneyPot()+"\n";
-		}
-		return s;
 	}
 	
 	/**
@@ -602,7 +442,6 @@ public class Network {
 			else 
 			{
 				int nodePointValue= r.nextInt(Parameters.MAX_POINT_VALUE - 1) + 1;
-				System.out.println("Setting point value " + nodePointValue + "for node id " + i);
 				tempNode.setPv(nodePointValue);
 				tempNode.setHoneyPot(0);
 				int randSecurity= r.nextInt(5 - 1) + 1;
@@ -667,22 +506,8 @@ public class Network {
 
 			}
 		}
-		//printNetwork(network);
 	}
 
-	/*public static void main(String [ ] args)
-    {
-		//Network nt = Parser.parseGraph("securitygame.graph");
-		//Network.printNetwork(nt);
-		//Network network = new Network();
-		generateNetwork("securitygame");
-		//Random r = new Random();
-		//for (int i = 0; i < 10; i++)
-		//{
-		//	int nodepointvalue= r.nextInt(Network.MAX_POINT_VALUE - 1) + 1;
-			//System.out.println(nodepointvalue);
-		//}
-	}*/
     /**
 	 * Returns an array list of all the captured nodes
 	 * @return all captured nodes in the network
@@ -702,7 +527,7 @@ public class Network {
 	public ArrayList<Node> getAvailableNodes(){
 		ArrayList<Node> availableNodes = new ArrayList<Node>();
 		for(int i = 0; i < nodes.length; i++){
-			for(int j = 0; nodes[i].isCaptured() && j < nodes[i].getNeighborAmount(); j++){
+			for(int j = 0; nodes[i].isCaptured() && j < nodes[i].neighbor.size(); j++){
 				Node neighbor = nodes[i].getNeighbor(j);
 				if(!neighbor.isCaptured() && !availableNodes.contains(neighbor))
 					availableNodes.add(neighbor);
