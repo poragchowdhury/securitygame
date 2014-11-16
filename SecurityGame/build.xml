@@ -195,5 +195,33 @@
   
   <target name="build.modules" depends="init, clean, compile.module.securitygame" description="build all modules"/>
   
-  <target name="all" depends="build.modules" description="build all"/>
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.securitygame:jar" value="${basedir}/classes/artifacts/SecurityGame_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.SecurityGame.jar" value="${artifacts.temp.dir}/SecurityGame.jar"/>
+  </target>
+  
+  <target name="artifact.securitygame:jar" depends="init.artifacts, compile.module.securitygame" description="Build &#39;SecurityGame:jar&#39; artifact">
+    <property name="artifact.temp.output.securitygame:jar" value="${artifacts.temp.dir}/SecurityGame_jar"/>
+    <mkdir dir="${artifact.temp.output.securitygame:jar}"/>
+    <jar destfile="${temp.jar.path.SecurityGame.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset file="${basedir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
+      <zipfileset dir="${securitygame.output.dir}"/>
+      <zipfileset src="${basedir}/src/commons-csv-1.0/commons-csv-1.0.jar"/>
+    </jar>
+    <copy file="${temp.jar.path.SecurityGame.jar}" tofile="${artifact.temp.output.securitygame:jar}/SecurityGame.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.securitygame:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.securitygame:jar}"/>
+    <copy todir="${artifact.output.securitygame:jar}">
+      <fileset dir="${artifact.temp.output.securitygame:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
 </project>
