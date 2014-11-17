@@ -135,7 +135,7 @@ public abstract class Attacker implements Runnable
     		
     		int j;
     		System.out.print("Captured Nodes: ");
-    		if(availableNodes.size() > 1){
+    		if(capturedNodes.size() > 1){
     		for(j = 0; j < capturedNodes.size() - 1; j++)
     			System.out.print(capturedNodes.get(j).getNodeID() + ",");
     		System.out.println(capturedNodes.get(j).getNodeID());

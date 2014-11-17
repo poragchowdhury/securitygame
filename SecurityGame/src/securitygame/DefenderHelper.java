@@ -154,7 +154,7 @@ public class DefenderHelper
         {
             Node n = net.getNode(id);
             budget -= Parameters.STRENGTHEN_RATE;
-            n.setSv(n.getSv());
+            n.setSv(n.getSv()+1);
             pw.write("0,"+id);
             pw.println();
         }
