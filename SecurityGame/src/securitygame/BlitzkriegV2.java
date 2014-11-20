@@ -17,17 +17,20 @@ import java.util.Random;
  * @version 14/14/2014
  */
 public class BlitzkriegV2 extends Attacker {
+
+    private final static String attackerName = "BlitzkriegV2";
+
     /**
      * Constructor
      * @param defenderName defender's name
      * @param graphFile graph to read
      */
 	public BlitzkriegV2(String defenderName, String graphFile) {
-		super("BlitzkriegV2", defenderName, graphFile);
+		super(attackerName, defenderName, graphFile);
 	}
 	
 	public BlitzkriegV2(){
-		super("BlitzkriegV2");
+		super(attackerName);
 	}
 	
 	/**

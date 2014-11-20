@@ -28,7 +28,7 @@ public class Blitzkrieg extends Attacker {
 	
 	/**DO NOT CHANGE THIS CONSTRUCTOR*/
 	public Blitzkrieg(){
-		super("Blitzkrieg");
+		super(attackerName);
 	}
 	
 	/**

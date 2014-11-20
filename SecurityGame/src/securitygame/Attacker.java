@@ -136,17 +136,26 @@ public abstract class Attacker implements Runnable
     		int j;
     		System.out.print("Captured Nodes: ");
     		if(capturedNodes.size() > 1){
-    		for(j = 0; j < capturedNodes.size() - 1; j++)
-    			System.out.print(capturedNodes.get(j).getNodeID() + ",");
-    		System.out.println(capturedNodes.get(j).getNodeID());
+                for(j = 0; j < capturedNodes.size() - 1; j++)
+                    System.out.print(capturedNodes.get(j).getNodeID() + ",");
+                System.out.println(capturedNodes.get(j).getNodeID());
     		} else if(capturedNodes.size() == 1) {
     			System.out.println(capturedNodes.get(0).getNodeID());
     		} else {
     			System.out.println(-1);
     		}
-    		
-    		AttackerAction attack = makeSingleAction();
-    		AttackerActionType type = attack.move;
+
+            AttackerAction attack = new AttackerAction(AttackerActionType.INVALID, -1);
+            AttackerActionType type = AttackerActionType.INVALID;
+            try{
+                attack = makeSingleAction();
+                type = attack.move;
+            }
+            catch (Exception e){
+                System.out.println("Error with "+attackerName);
+                e.printStackTrace();
+            }
+
             switch(type){
             case ATTACK:
             	attack(attack.nodeID);
@@ -170,7 +179,6 @@ public abstract class Attacker implements Runnable
             	invalid();
             	break;
             }
-            
             isAlive = false;
         }
         ah.close();

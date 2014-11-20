@@ -77,7 +77,12 @@ public abstract class Defender implements Runnable
     public final void run()
     {
         while(isAlive){
+            try{
             makeMoves();
+            }catch (Exception e){
+                System.out.println("Error with "+defenderName);
+                e.printStackTrace();
+            }
             isAlive = false;
         }
         dh.close();

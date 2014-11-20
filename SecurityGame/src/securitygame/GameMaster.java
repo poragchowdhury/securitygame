@@ -5,14 +5,22 @@ import java.util.ArrayList;
 /**
  * Pits Attacker and Defender agents against one another in the name of Science!
  *
+ * STUDENTS: add your defenders and attackers to the sections in main that say "add defenders here" and "add attackers here"
+ * Also add your defender to the method getDefenderByName() and your attacker to getAttackerByName()
+ * You may also edit the rates in the Parameters class. Trust that these rates will be changed when the full tournament is run.
+ *
  * @author Oscar Veliz, Porag Chowdhury, Anjon Basak, Marcus Gutierrez
  * @version 2014/11/14
  */
 public class GameMaster
 {
+    /**
+     * Runs the tournament
+     * @param args not using any command line arguments
+     */
     public static void main(String[] args)
     {
-        int numGames = 1;
+        int numGames = 2;
         generateGraphs(numGames);
 
         //add Defenders here
@@ -81,6 +89,10 @@ public class GameMaster
         Analyzer analyzer = new Analyzer(points,attackerNames,defenderNames);
     }
 
+    /**
+     * Generates graphs
+     * @param numGraphs the number of graphs to generate
+     */
     public static void generateGraphs(int numGraphs)
     {
         for(int i = 0; i < numGraphs; i++)
@@ -90,15 +102,21 @@ public class GameMaster
         }
     }
 
+    /**
+     * You should edit this method to include your defender
+     * @param name name of defender
+     * @param file graph defender will read
+     * @return your defender
+     */
     public static Defender getDefender(String name, String file)
     {
-        Defender d;
-        if(name.equalsIgnoreCase("WhatDoesThisButtonDo")){
+        if(name.equalsIgnoreCase("WhatDoesThisButtonDo"))
             return new WhatDoesThisButtonDoDefender(file);
-        }
-        if(name.equalsIgnoreCase("WhatDoesThisButtonDoV2")){
+        if(name.equalsIgnoreCase("WhatDoesThisButtonDoV2"))
             return new WhatDoesThisButtonDoDefenderV2(file);
-        }
+        //add your defender
+
+        //invalid defender if name could not be found
         return new Defender("","") {
             @Override
             public void makeMoves() {
@@ -106,15 +124,24 @@ public class GameMaster
             }
         };
     }
+
+    /**
+     * You should edit this method to include your attacker
+     * @param defName name of defender attacker will be pit against
+     * @param atName name of defender
+     * @param file graph defender will attack
+     * @return your attacker
+     */
     public static Attacker getAttacker(String defName, String atName, String file)
     {
-        Attacker a;
         if(atName.equalsIgnoreCase("Blitzkrieg"))
             return new Blitzkrieg(defName,file);
         if(atName.equalsIgnoreCase("BlitzkriegV2"))
             return new BlitzkriegV2(defName,file);
-        return new Attacker("","",""){
+        //add your attacker here
 
+        //in case your name was not added
+        return new Attacker("","",""){
 			@Override
 			public AttackerAction makeSingleAction() {
 				System.out.println("check attacker name");

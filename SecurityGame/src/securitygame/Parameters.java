@@ -39,9 +39,9 @@ public class Parameters {
     /**The cost for performing an attack*/
     public static final int ATTACK_RATE = 8;
     /**The maximum value for a super attack*/
-    public static final int SUPERATTACK_ROLL = 30;
+    public static final int SUPERATTACK_ROLL = 50;
     /**The cost for performing a super attack*/
-    public static final int SUPERATTACK_RATE = 10;
+    public static final int SUPERATTACK_RATE = 20;
     /**The cost to probe for the security value*/
     public static final int PROBE_SECURITY_RATE = 2;
     /**The cost to probe for the point value*/
