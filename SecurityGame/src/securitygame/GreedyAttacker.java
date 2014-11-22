@@ -51,12 +51,12 @@ public class GreedyAttacker extends Attacker{
 		int minmaxPv = Integer.MAX_VALUE;
 		for(Node x: availableNodes)
 		{
-			if (x.getPv() <=10 && (maxPv<x.getPv()))
+			if (x.getPv() <=15 && (maxPv<x.getPv()))
 			{
 				maxPv = x.getPv();
 				nodeidwithmaxPv = x.getNodeID();
 			}
-			else if(x.getPv()>10 &&  x.getPv()<minmaxPv)
+			else if(x.getPv()>15 &&  x.getPv()<minmaxPv)
 			{
 				nodeidwithminmaxPv = x.getNodeID();
 				minmaxPv = x.getPv();
