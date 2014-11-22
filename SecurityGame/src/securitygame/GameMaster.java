@@ -27,6 +27,9 @@ public class GameMaster
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         defenders.add(new WhatDoesThisButtonDoDefender("0"));
         defenders.add(new WhatDoesThisButtonDoDefenderV2("0"));
+        defenders.add(new NumbDefender("0"));
+        defenders.add(new RationalDefender("0"));
+        
 
         //get names of defenders
         String[] defenderNames = new String[defenders.size()];
@@ -40,7 +43,7 @@ public class GameMaster
             {
                 Defender defender = getDefender(defenderNames[d],g+"");
                 new Thread(defender).start();
-                try{Thread.sleep(2000);}catch (Exception e){e.printStackTrace();}
+                try{Thread.sleep(500);}catch (Exception e){e.printStackTrace();}
                 defender.kill();
                 new DefenderHelper(defender.getName(), defender.getGraph());
             }
@@ -50,6 +53,7 @@ public class GameMaster
         ArrayList<Attacker> attackers = new ArrayList<Attacker>();
         attackers.add(new Blitzkrieg());
         attackers.add(new BlitzkriegV2());
+        attackers.add(new CautiousAttacker());
         
         //get names of attackers
         String[] attackerNames = new String[attackers.size()];
@@ -114,6 +118,10 @@ public class GameMaster
             return new WhatDoesThisButtonDoDefender(file);
         if(name.equalsIgnoreCase("WhatDoesThisButtonDoV2"))
             return new WhatDoesThisButtonDoDefenderV2(file);
+        if(name.equalsIgnoreCase("NumbDefender"))
+            return new NumbDefender(file);
+        if(name.equalsIgnoreCase("RationalDefender"))
+            return new RationalDefender(file);
         //add your defender
 
         //invalid defender if name could not be found
@@ -138,6 +146,9 @@ public class GameMaster
             return new Blitzkrieg(defName,file);
         if(atName.equalsIgnoreCase("BlitzkriegV2"))
             return new BlitzkriegV2(defName,file);
+        if(atName.equalsIgnoreCase("CautiousAttacker"))
+            return new CautiousAttacker(defName,file);
+        
         //add your attacker here
 
         //in case your name was not added

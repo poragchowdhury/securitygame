@@ -19,11 +19,15 @@ public class WhatDoesThisButtonDoDefenderV2 extends Defender
     public void makeMoves()
     {
     	Random r = new Random();
-        int tries = 0;
-        int node = r.nextInt(net.getSize());
-        while(!dh.isValidStrengthen(node) && tries++ < 10)
-            node = r.nextInt();
-        strengthen(node);
-        dh.close();
+    	while(dh.getBudget()>0)
+    	{
+	    	int tries = 0;
+	        int node = r.nextInt(net.getSize());
+	        while(!dh.isValidStrengthen(node) && tries++ < 10)
+	            node = r.nextInt();
+	        strengthen(node);
+	        
+    	}
+    	dh.close();
     }
 }
