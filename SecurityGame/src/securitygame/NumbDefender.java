@@ -2,6 +2,12 @@ package securitygame;
 
 import java.util.Random;
 
+/**
+ * Level 0 BenchMark Defender Agent that takes invalid actions
+ * @author Porag Chowdhury, Anjan Basak
+ */
+
+
 public class NumbDefender extends Defender{
 	
 	   public NumbDefender(String graphFile)

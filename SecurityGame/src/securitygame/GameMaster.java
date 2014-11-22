@@ -20,13 +20,13 @@ public class GameMaster
      */
     public static void main(String[] args)
     {
-        int numGames = 2;
+        int numGames = 20;
         generateGraphs(numGames);
 
         //add Defenders here
         ArrayList<Defender> defenders = new ArrayList<Defender>();
         defenders.add(new WhatDoesThisButtonDoDefender("0"));
-        defenders.add(new WhatDoesThisButtonDoDefenderV2("0"));
+        defenders.add(new SecuredDefender("0"));
         defenders.add(new NumbDefender("0"));
         defenders.add(new RationalDefender("0"));
         
@@ -52,8 +52,9 @@ public class GameMaster
         //add Attackers here
         ArrayList<Attacker> attackers = new ArrayList<Attacker>();
         attackers.add(new Blitzkrieg());
-        attackers.add(new BlitzkriegV2());
+        attackers.add(new CrazyAttacker());
         attackers.add(new CautiousAttacker());
+        attackers.add(new GreedyAttacker());
         
         //get names of attackers
         String[] attackerNames = new String[attackers.size()];
@@ -116,8 +117,8 @@ public class GameMaster
     {
         if(name.equalsIgnoreCase("WhatDoesThisButtonDo"))
             return new WhatDoesThisButtonDoDefender(file);
-        if(name.equalsIgnoreCase("WhatDoesThisButtonDoV2"))
-            return new WhatDoesThisButtonDoDefenderV2(file);
+        if(name.equalsIgnoreCase("SecuredDefender"))
+            return new SecuredDefender(file);
         if(name.equalsIgnoreCase("NumbDefender"))
             return new NumbDefender(file);
         if(name.equalsIgnoreCase("RationalDefender"))
@@ -144,10 +145,12 @@ public class GameMaster
     {
         if(atName.equalsIgnoreCase("Blitzkrieg"))
             return new Blitzkrieg(defName,file);
-        if(atName.equalsIgnoreCase("BlitzkriegV2"))
-            return new BlitzkriegV2(defName,file);
+        if(atName.equalsIgnoreCase("CrazyAttacker"))
+            return new CrazyAttacker(defName,file);
         if(atName.equalsIgnoreCase("CautiousAttacker"))
             return new CautiousAttacker(defName,file);
+        if(atName.equalsIgnoreCase("GreedyAttacker"))
+            return new GreedyAttacker(defName,file);
         
         //add your attacker here
 

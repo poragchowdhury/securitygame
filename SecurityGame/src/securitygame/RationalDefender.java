@@ -3,6 +3,12 @@ package securitygame;
 import java.util.ArrayList;
 import java.util.Random;
 
+
+/**
+ * BenchMark Defender Agent that takes rational decision based on the defender action cost
+ * @author Porag Chowdhury, Anjan Basak
+ */
+
 public class RationalDefender extends Defender{
 	
 	public RationalDefender(String graphFile)
