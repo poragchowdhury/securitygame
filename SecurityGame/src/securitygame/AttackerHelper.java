@@ -25,6 +25,7 @@ public class AttackerHelper
     /**
      * Constructor used by Attacker to initialize visibility file and keep track of attacker history.
      * @param net Graph being secured given a budget
+     * @param budget current budget
      * @param attackerName name of the attacker
      * @param defenderName name of the defender
      * @param graphName name of the graph

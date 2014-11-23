@@ -3,14 +3,14 @@ package securitygame;
 import java.util.Random;
 
 /**
- * Example Defender Agent that decides on actions at random
+ * Example Defender Agent that strengthens at random
  * @author Porag Chowdhury
  */
-public class RandomSecurityDefender extends Defender
+public class Strengthener extends Defender
 {
-    public RandomSecurityDefender(String graphFile)
+    public Strengthener(String graphFile)
     {
-        super("RandomSecurityDefender",graphFile);
+        super("Strengthener",graphFile);
     }
 
     /**

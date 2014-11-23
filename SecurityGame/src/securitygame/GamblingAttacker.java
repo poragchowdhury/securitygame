@@ -16,20 +16,20 @@ import java.util.Random;
  * @author Marcus Gutierrez
  * @version 14/14/2014
  */
-public class CrazyAttacker extends Attacker {
+public class GamblingAttacker extends Attacker {
 
-    private final static String attackerName = "CrazyAttacker";
+    private final static String attackerName = "GamblingAttacker";
 
     /**
      * Constructor
      * @param defenderName defender's name
      * @param graphFile graph to read
      */
-	public CrazyAttacker(String defenderName, String graphFile) {
+	public GamblingAttacker(String defenderName, String graphFile) {
 		super(attackerName, defenderName, graphFile);
 	}
 	
-	public CrazyAttacker(){
+	public GamblingAttacker(){
 		super(attackerName);
 	}
 	
@@ -53,6 +53,8 @@ public class CrazyAttacker extends Attacker {
      */
 	public AttackerAction makeSingleAction() {
 		Random r = new Random();
+        if(availableNodes.size()==0)
+            return new AttackerAction(AttackerActionType.INVALID,0);
 		int nodeID = availableNodes.get(r.nextInt(availableNodes.size())).getNodeID();
 		return new AttackerAction(AttackerActionType.ATTACK, nodeID);
 		

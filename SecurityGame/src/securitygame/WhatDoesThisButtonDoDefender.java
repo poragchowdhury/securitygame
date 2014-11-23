@@ -10,7 +10,7 @@ public class WhatDoesThisButtonDoDefender extends Defender
 {
     public WhatDoesThisButtonDoDefender(String graphFile)
     {
-        super("WhatDoesThisButtonDo",graphFile);
+        super("WDTBD",graphFile);
     }
 
     /**

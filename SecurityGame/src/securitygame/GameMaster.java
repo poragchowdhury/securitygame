@@ -28,7 +28,7 @@ public class GameMaster {
 		// add Defenders here
 		ArrayList<Defender> defenders = new ArrayList<Defender>();
 		defenders.add(new WhatDoesThisButtonDoDefender("0"));
-		defenders.add(new RandomSecurityDefender("0"));
+		defenders.add(new Strengthener("0"));
 		defenders.add(new NumbDefender("0"));
 		defenders.add(new RationalDefender("0"));
 
@@ -55,7 +55,7 @@ public class GameMaster {
 		// add Attackers here
 		ArrayList<Attacker> attackers = new ArrayList<Attacker>();
 		attackers.add(new Blitzkrieg());
-		attackers.add(new CrazyAttacker());
+		attackers.add(new GamblingAttacker());
 		attackers.add(new CautiousAttacker());
 		attackers.add(new GreedyAttacker());
 
@@ -97,7 +97,7 @@ public class GameMaster {
 			}
 		}
 		// perform analysis
-		Analyzer analyzer = new Analyzer(points, attackerNames, defenderNames);
+		new Analyzer(points, attackerNames, defenderNames);
 	}
 
 	/**
@@ -123,10 +123,10 @@ public class GameMaster {
 	 * @return your defender
 	 */
 	public static Defender getDefender(String name, String file) {
-		if (name.equalsIgnoreCase("WhatDoesThisButtonDo"))
+		if (name.equalsIgnoreCase("WDTBD"))
 			return new WhatDoesThisButtonDoDefender(file);
-		if (name.equalsIgnoreCase("RandomSecurityDefender"))
-			return new RandomSecurityDefender(file);
+		if (name.equalsIgnoreCase("Strengthener"))
+			return new Strengthener(file);
 		if (name.equalsIgnoreCase("NumbDefender"))
 			return new NumbDefender(file);
 		if (name.equalsIgnoreCase("RationalDefender"))
@@ -157,8 +157,8 @@ public class GameMaster {
 			String file) {
 		if (atName.equalsIgnoreCase("Blitzkrieg"))
 			return new Blitzkrieg(defName, file);
-		if (atName.equalsIgnoreCase("CrazyAttacker"))
-			return new CrazyAttacker(defName, file);
+		if (atName.equalsIgnoreCase("GamblingAttacker"))
+			return new GamblingAttacker(defName, file);
 		if (atName.equalsIgnoreCase("CautiousAttacker"))
 			return new CautiousAttacker(defName, file);
 		if (atName.equalsIgnoreCase("GreedyAttacker"))

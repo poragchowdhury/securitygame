@@ -3,7 +3,7 @@ package securitygame;
 import java.util.Random;
 
 /**
- * Example attacker agent.
+ * Example attacker agent that decides on actions at random.
  * IMPORTANT NOTE: 	Your attacker object will be recreated for every action. Because of this,
  * 					model your Attacker to only make a decision on the current information. Do
  * 					not try to use variables that will carry on in to the next makeSingleAction()
@@ -51,6 +51,8 @@ public class Blitzkrieg extends Attacker {
      */
 	public AttackerAction makeSingleAction() {
 		Random r = new Random();
+        if(availableNodes.size()==0)
+            return new AttackerAction(AttackerActionType.INVALID,0);
 		int nodeID = availableNodes.get(r.nextInt(availableNodes.size())).getNodeID();
 		int move = r.nextInt(6);
 		AttackerActionType type;
