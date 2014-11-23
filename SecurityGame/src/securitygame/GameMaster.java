@@ -22,7 +22,7 @@ public class GameMaster {
 	 *            not using any command line arguments
 	 */
 	public static void main(String[] args) {
-		int numGames = 20;
+		int numGames = 1;
 		generateGraphs(numGames);
 
 		// add Defenders here
