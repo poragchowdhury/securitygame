@@ -31,6 +31,7 @@ public abstract class Attacker implements Runnable
     public Attacker(String agentName, String defenderName, String graphName)
     {
         attackerName = agentName;
+        graph = graphName;
         netVisible = Parser.parseAttackerHistory(agentName, defenderName, graphName);
         capturedNodes = netVisible.getCapturedNodes();
         availableNodes = netVisible.getAvailableNodes();
@@ -120,7 +121,6 @@ public abstract class Attacker implements Runnable
     {
     	while(isAlive)
         {
-    		
     		int i;
     		System.out.print("Available Nodes: ");
     		if(availableNodes.size() > 1){

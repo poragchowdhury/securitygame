@@ -225,10 +225,7 @@ public class DefenderHelper
         else
         {
             Node n = net.getNode(id);
-            if(n != null && n.getSv()!=20 && n.getSv()!=0)
-                return true;
-            else //can't strengthen public node or maxed out node
-                return false;
+            return (n != null && n.getSv() != 20 && n.getSv() != 0);//can't strengthen public node or maxed out node
         }
     }
 
@@ -242,7 +239,7 @@ public class DefenderHelper
             Node n2 = net.getNode(id2);
             if(n1 == null || n2 == null)
                 return false;
-            else if(n1.neighbor.size()==1 || n2.neighbor.size()==1)//can't make islands
+            else if(n1.neighbor.size()==1 || n2.neighbor.size()==1)
                 return false;
             else return n1.neighbor.contains(n2);
         }

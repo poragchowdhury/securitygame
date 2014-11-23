@@ -40,6 +40,12 @@ public class AttackerMonitor
     private Random r;
     private ArrayList<Node> availableNodes;
 
+    /**
+     * Constructor
+     * @param attackerName attacker name
+     * @param defenderName defender name
+     * @param graphName graph name
+     */
     public AttackerMonitor(String attackerName, String defenderName, String graphName){
         budget = Parameters.ATTACKER_BUDGET;
         System.out.println("Initial Budget1: " + budget);
@@ -69,7 +75,9 @@ public class AttackerMonitor
         history.close();
     }
 
-    
+    /**
+     * Parses attacker's move from .attack file
+     */
     public void readMove(){
 		try{
 			visibleNet = Parser.parseAttackerHistory(attackerName, defenderName, graphName);
@@ -252,47 +260,92 @@ public class AttackerMonitor
         return budget;
     }
 
+    /**
+     * Actually doesn't check if move is valid but rather if there is enough budget for this move
+     * Ping Marcus to fix this
+     * @param id node id
+     * @return if there is enough budget for this move
+     */
     public boolean isValidAttack(int id){
         if(budget < Parameters.ATTACK_RATE)
             return false;
         return true;
     }
-    
+
+    /**
+     * Actually doesn't check if move is valid but rather if there is enough budget for this move
+     * Ping Marcus to fix this
+     * @param id node id
+     * @return if there is enough budget for this move
+    */
     public boolean isValidSuperAttack(int id){
         if(budget < Parameters.SUPERATTACK_RATE)
             return false;
         return true;
     }
-    
+
+    /**
+     * Actually doesn't check if move is valid but rather if there is enough budget for this move
+     * Ping Marcus to fix this
+     * @param id node id
+     * @return if there is enough budget for this move
+    */
     public boolean isValidProbeSV(int id){
         if(budget < Parameters.PROBE_SECURITY_RATE)
             return false;
         return true;
     }
     
+    /**
+     * Actually doesn't check if move is valid but rather if there is enough budget for this move
+     * Ping Marcus to fix this
+     * @param id node id
+     * @return if there is enough budget for this move
+     */
     public boolean isValidProbePV(int id){
         if(budget < Parameters.PROBE_POINT_RATE)
             return false;
         return true;
     }
-    
+
+    /**
+     * Actually doesn't check if move is valid but rather if there is enough budget for this move
+     * Ping Marcus to fix this
+     * @param id node id
+     * @return if there is enough budget for this move
+     */
     public boolean isValidProbeConn(int id){
         if(budget < Parameters.PROBE_CONNECTIONS_RATE)
             return false;
         return true;
     }
-    
+
+    /**
+     * Actually doesn't check if move is valid but rather if there is enough budget for this move
+     * Ping Marcus to fix this
+     * @param id node id
+     * @return if there is enough budget for this move
+    */
     public boolean isValidProbeHP(int id){
         if(budget < Parameters.PROBE_HONEY_RATE)
             return false;
         return true;
     }
-    
+
+    /**
+     * Checks if node is available based on id
+     * @param id ID of node you want to check
+     * @return if node is available
+     */
     private boolean isAvailableNode(int id){
     	Node n = new Node(id);
     	return availableNodes.contains(n);
     }
 
+    /**
+     * Gets total points
+     * @return total points
+     */
     public int getPoints()
     {
         return points;

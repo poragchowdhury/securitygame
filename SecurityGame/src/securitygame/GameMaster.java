@@ -18,11 +18,10 @@ public class GameMaster {
 	/**
 	 * Runs the tournament
 	 * 
-	 * @param args
-	 *            not using any command line arguments
+	 * @param args not using any command line arguments
 	 */
 	public static void main(String[] args) {
-		int numGames = 1;
+		int numGames = 20;
 		generateGraphs(numGames);
 
 		// add Defenders here
@@ -87,8 +86,7 @@ public class GameMaster {
 						}
 						attacker.kill();
 						am.readMove();
-						System.out.println("Budget after move: "
-								+ am.getBudget());
+						System.out.println("Budget after move: "+ am.getBudget());
 						System.out.println();
 					}
 					am.close();

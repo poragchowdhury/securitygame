@@ -85,13 +85,11 @@ public class Network {
 	{
 		if(nodeId >= nodes.length || nodeId < 0)
 			return null;
-		for(int i=0; i<nodes.length; i++)
-		{
-			if(nodes[i].getNodeID()==nodeId)
-			{
-				return nodes[i];
-			}
-		}
+        for (Node node : nodes)
+        {
+            if (node.getNodeID() == nodeId)
+                return node;
+        }
 		return null;
 	}
 
@@ -146,10 +144,7 @@ public class Network {
 			if (adjacencyMatrix[neighborIndex][i] == 1)
 				neighborCount++;
 		}
-		if(neighborCount < Parameters.MAX_NEIGHBORS)
-			return true;
-		else
-			return false;
+        return neighborCount < Parameters.MAX_NEIGHBORS;
 
 	}
 
@@ -190,7 +185,7 @@ public class Network {
 	public void printHiddenNetwork()
 	{
 		ArrayList<Node> captured = getCapturedNodes();
-		System.out.println("Captured: " + captured.size());
+		//System.out.println("Captured: " + captured.size());
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(fullGraphName + "-hidden.graph", "UTF-8");
@@ -476,7 +471,7 @@ public class Network {
 			{
 				//add some random neighbor
 				int neighborcounter = 0;
-				System.out.println("Node "+ i +" has no neighbor");
+				//System.out.println("Node "+ i +" has no neighbor");
 				Random rand = new Random();
 				while(true)
 				{

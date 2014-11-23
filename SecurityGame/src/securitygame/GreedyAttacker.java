@@ -4,7 +4,11 @@ public class GreedyAttacker extends Attacker{
 	/**INSERT YOUR ATTACKER NAME HERE*/
 	private final static String attackerName = "GreedyAttacker";
 	
-    /**DO NOT CHANGE THIS CONSTRUCTOR*/
+    /**
+     * DO NOT CHANGE THIS CONSTRUCTOR
+     * @param defenderName name of defender
+     * @param graphFile file containing graph
+     */
 	public GreedyAttacker(String defenderName, String graphFile) {
 		super(attackerName, defenderName, graphFile);
 	}
@@ -34,7 +38,7 @@ public class GreedyAttacker extends Attacker{
      */
 	public AttackerAction makeSingleAction() {
 		AttackerActionType type;		
-		int nodeID = -1;
+		int nodeID;
 		
 		for(Node x: availableNodes)
 		{
